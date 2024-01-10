@@ -1,37 +1,63 @@
-import { Fragment, useState } from 'react'
-import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
+import { Fragment, useState, useEffect } from "react";
 import {
-  ArrowPathIcon,
+  Dialog,
+  Disclosure,
+  Menu,
+  Popover,
+  Transition,
+} from "@headlessui/react";
+
+import {
   Bars3Icon,
   ChartPieIcon,
   CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, BellIcon } from "@heroicons/react/20/solid";
+import { checkLoginStatus, isSignUpPage, isLoginPage } from "../../utils/Auth";
+import useProfile from "../../hooks/profile/Profile";
 
 const products = [
-  { name: 'New Product', description: 'Introducing our latest cutting-edge innovation, designed to revolutionize the way you experience technology.', href: '#', icon: ChartPieIcon },
-  { name: 'Top Product', description: 'Our flagship product, delivering unparalleled performance and user satisfaction to elevate your digital experience.', href: '#', icon: CursorArrowRaysIcon },
+  {
+    name: "New Product",
+    description:
+      "Introducing our latest cutting-edge innovation, designed to revolutionize the way you experience technology.",
+    href: "#",
+    icon: ChartPieIcon,
+  },
+  {
+    name: "Top Product",
+    description:
+      "Our flagship product, delivering unparalleled performance and user satisfaction to elevate your digital experience.",
+    href: "#",
+    icon: CursorArrowRaysIcon,
+  },
 ];
 
-const callsToAction = []
-
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function NavbarComponents() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isLoggedIn = checkLoginStatus();
+  const signUpPage = isSignUpPage(location.pathname);
+  const { profileData, isLoading, error } = useProfile();
 
   return (
     <header className="bg-white">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav
+        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        aria-label="Global"
+      >
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Ruti Store</span>
-            <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+            <img
+              className="h-8 w-auto"
+              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              alt=""
+            />
           </a>
         </div>
         <div className="flex lg:hidden">
@@ -48,7 +74,10 @@ export default function NavbarComponents() {
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
               Product
-              <ChevronDownIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+              <ChevronDownIcon
+                className="h-5 w-5 flex-none text-gray-400"
+                aria-hidden="true"
+              />
             </Popover.Button>
 
             <Transition
@@ -68,10 +97,16 @@ export default function NavbarComponents() {
                       className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <item.icon className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                        <item.icon
+                          className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                          aria-hidden="true"
+                        />
                       </div>
                       <div className="flex-auto">
-                        <a href={item.href} className="block font-semibold text-gray-900">
+                        <a
+                          href={item.href}
+                          className="block font-semibold text-gray-900"
+                        >
                           {item.name}
                           <span className="absolute inset-0" />
                         </a>
@@ -82,8 +117,9 @@ export default function NavbarComponents() {
                 </div>
               </Popover.Panel>
             </Transition>
-          </Popover>
 
+            {/* Menu */}
+          </Popover>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
             About
           </a>
@@ -91,23 +127,128 @@ export default function NavbarComponents() {
             Contact
           </a>
         </Popover.Group>
+
+        {/* Navbar log */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="/login" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          {!isLoggedIn ? (
+            signUpPage ? (
+              <a
+                href="/login"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Login <span aria-hidden="true">&rarr;</span>
+              </a>
+            ) : (
+              <a
+                href="/signup"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Sign up <span aria-hidden="true">&rarr;</span>
+              </a>
+            )
+          ) : (
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <button
+                type="button"
+                className="relative rounded-full  p-1 text-orange-400 hover:bg-gray-200 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">View notifications</span>
+                <BellIcon className="h-6 w-6" aria-hidden="true" />
+              </button>
+
+              {/* Profile dropdown */}
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    {profileData && (
+                      <img
+                        className="h-8 w-8 rounded-full"
+                        src={profileData.photo_profile}
+                        alt=""
+                      />
+                    )}
+                  </Menu.Button>
+                </div>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
+                          )}
+                        >
+                          Your Profile
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
+                          )}
+                        >
+                          Settings
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
+                          )}
+                        >
+                          Sign out
+                        </a>
+                      )}
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+          )}
+          <MobileMenuDialog
+            mobileMenuOpen={mobileMenuOpen}
+            setMobileMenuOpen={setMobileMenuOpen}
+          />
         </div>
-        <MobileMenuDialog
-          mobileMenuOpen={mobileMenuOpen}
-          setMobileMenuOpen={setMobileMenuOpen}
-        />
       </nav>
     </header>
-  )
+  );
 }
 
 function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
+  const isLoggedIn = checkLoginStatus();
+  const signUpPage = isSignUpPage(location.pathname);
+  const loginPage = isLoginPage(location.pathname);
+
   return (
-    <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+    <Dialog
+      as="div"
+      className="lg:hidden"
+      open={mobileMenuOpen}
+      onClose={setMobileMenuOpen}
+    >
       <div className="fixed inset-0 z-10" />
       <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
         <div className="flex items-center justify-between">
@@ -137,7 +278,10 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                     <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
                       Product
                       <ChevronDownIcon
-                        className={classNames(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')}
+                        className={classNames(
+                          open ? "rotate-180" : "",
+                          "h-5 w-5 flex-none"
+                        )}
                         aria-hidden="true"
                       />
                     </Disclosure.Button>
@@ -168,19 +312,45 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
               >
                 Contact
               </a>
-              
             </div>
             <div className="py-6">
-              <a
-                href="/login"
-                className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-              >
-                Log in
-              </a>
+              {isLoggedIn ? (
+                <div>
+                  <a
+                    href="/profile"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Profile
+                  </a>
+                  {/* Tulisan Notifikasi */}
+                  <div className="mt-2">
+                    <a
+                      href="/notifications"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      Notifications
+                    </a>
+                  </div>
+                </div>
+              ) : loginPage ? (
+                <a
+                  href="/signup"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Sign Up
+                </a>
+              ) : signUpPage ? (
+                <a
+                  href="/login"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Sign In
+                </a>
+              ) : null}
             </div>
           </div>
         </div>
       </Dialog.Panel>
     </Dialog>
-  )
+  );
 }
