@@ -1,30 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLoginForm } from "../../hooks/auth/login";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const { email, setEmail, password, setPassword, error, handleLogin } =
     useLoginForm();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Menampilkan animasi memuat
+
     const loginSuccess = await handleLogin(e);
+    setIsLoading(false); // Menyembunyikan animasi memuat setelah selesai
+
     if (loginSuccess) {
-      alert("Login successful!");
-      navigate("/"); 
+      setShowSuccessNotification(true); // Menampilkan notifikasi sukses
+      setTimeout(() => {
+        setShowSuccessNotification(false); // Menyembunyikan notifikasi setelah beberapa detik
+        navigate("/");
+      }, 3000); // Atur notifikasi tampil selama 3 detik
     }
   };
 
-
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600">
       <div className="w-full max-w-md">
         <form
           onSubmit={handleSubmit}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
-          <h2 className="text-2xl font-bold mb-4">Login Page</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
+            Login Page
+          </h2>
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -37,7 +48,8 @@ const LoginPage = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Email"
+              className="w-full border-2 border-gray-300 rounded-md p-3 focus:outline-none focus:border-indigo-500"
             />
           </div>
           <div className="mb-6">
@@ -52,17 +64,25 @@ const LoginPage = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Password"
+              className="w-full border-2 border-gray-300 rounded-md p-3 focus:outline-none focus:border-indigo-500"
             />
           </div>
           {error && <div className="text-red-500 mb-4">{error}</div>}
+          
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="w-full bg-indigo-600 text-white rounded-md py-3 hover:bg-indigo-700 focus:outline-none"
+            disabled={isLoading} // Menonaktifkan tombol saat memuat
           >
-            Login
+            {isLoading ? "Loading..." : "Login"} {/* Text tombol disesuaikan */}
           </button>
         </form>
+        {showSuccessNotification && (
+          <div className="bg-green-500 text-white rounded-md p-3 text-center">
+            Login successful! Redirecting...
+          </div>
+        )}
       </div>
     </div>
   );
