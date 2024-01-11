@@ -34,7 +34,7 @@ const LoginPage = () => {
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
           <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
-            Login Page
+            Login
           </h2>
           <div className="mb-4">
             <label
