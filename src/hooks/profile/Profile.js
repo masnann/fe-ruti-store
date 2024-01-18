@@ -10,7 +10,7 @@ const useProfile = () => {
     const fetchProfile = async () => {
       setIsLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) return;
 
       try {

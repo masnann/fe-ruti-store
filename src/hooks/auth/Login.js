@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { BASE_URL } from '../../utils/ApiConfig';
-
+import { useState } from "react";
+import { BASE_URL } from "../../utils/ApiConfig";
 
 export function useLoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,25 +16,24 @@ export function useLoginForm() {
 
     try {
       const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
-      
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify(loginData),
       });
 
       if (!response.ok) {
-        throw new Error('Invalid login');
+        throw new Error("Invalid login");
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.data.access_token);
-      setError('');
+      sessionStorage.setItem("token", data.data.access_token);
+      setError("");
       return true; // Login successful
     } catch (error) {
-      setError('Invalid username or password');
-      console.error('Login failed:', error);
+      setError("Invalid username or password");
+      console.error("Login failed:", error);
       return false; // Login failed
     }
   };
