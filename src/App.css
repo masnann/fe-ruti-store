@@ -1,0 +1,10 @@
+/* Tambahkan di CSS Anda */
+.sidebar-closed .flex-1 {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .sidebar-closed .sidebar-toggle-button {
+    margin-left: 0;
+  }
+  
