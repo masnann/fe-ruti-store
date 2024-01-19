@@ -7,6 +7,8 @@ import RegisterPage from "./pages/register/RegisterPage";
 import About from "./components/home/About";
 import SignUpForm from "./pages/register/SignupPage";
 import SignInForm from "./pages/login/SigninPage";
+import GetAllArticle from "./pages/article/GetAllArticle";
+import DetailArticle from "./pages/article/DetailsArtilce";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             <Route exact path="/signup" element={<RegisterPage />} />
             <Route exact path="/signups" element={<SignUpForm />} />
             <Route exact path="/about" element={<About />} />
+            <Route exact path="/article" element={<GetAllArticle />} />
+            <Route exact path="/article/details/:id" element={<DetailArticle />} />
           </Routes>
         </div>
         <Footer />

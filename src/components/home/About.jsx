@@ -13,17 +13,18 @@ const AboutUs = () => {
         "Shop anytime, anywhere. We provide non-stop shopping convenience at your fingertips",
     },
     {
-      title: "Operational Cost Efficiency",
+      title: "Cost Efficiency",
       description:
         "Save on operational costs with our online presence. Focus on business growth, not expenses.",
     },
   ];
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    // <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
+      <div className="bg-gray-100 p-4">
       <h2 className="text-4xl font-bold mb-8 text-center">About Us</h2>
-      <div className="flex flex-col lg:flex-row lg:justify-center space-y-8 lg:space-y-0 lg:space-x-8">
-        <div className="w-full lg:w-1/2">
+      <div className="flex flex-col lg:flex-row lg:justify-center space-y-4 lg:space-y-0 lg:space-x-4 bg-white rounded-lg shadow-lg p-4 lg:p-8">
+        <div className="flex items-center justify-center lg:w-1/2 p-2">
           <img
             src="https://res.cloudinary.com/dufa4bel6/image/upload/v1702302550/disappear/pvkmms1w5dvw3o85vvqf.png"
             alt="Gambar tentang kami"
@@ -66,7 +67,7 @@ const AboutUs = () => {
         our valued customers.
       </p>
 
-      <div className="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-y-0 lg:space-x-8">
+      <div className="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-y-0 lg:space-x-8 mb-10">
         {reasons.map((reason, index) => (
           <div
             key={index}
