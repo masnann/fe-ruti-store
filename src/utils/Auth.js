@@ -1,5 +1,5 @@
 export const checkLoginStatus = () => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   return !!token; // Mengembalikan true jika token ada, false jika tidak
 };
 

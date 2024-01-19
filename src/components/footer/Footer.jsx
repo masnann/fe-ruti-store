@@ -1,7 +1,7 @@
 // Footer.jsx
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 md:py-12">
+    <footer id="contact" className="bg-gray-900 text-white py-8 md:py-12">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center">
-          <p className="text-gray-500 footer-text">
+          <p className="text-gray-500 footer-text text-center">
             &copy; 2024 Ruti Store. All rights reserved.
           </p>
         </div>
