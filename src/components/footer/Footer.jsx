@@ -24,7 +24,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center">
-          <p className="text-gray-500 footer-text">
+          <p className="text-gray-500 footer-text text-center">
             &copy; 2024 Ruti Store. All rights reserved.
           </p>
         </div>
