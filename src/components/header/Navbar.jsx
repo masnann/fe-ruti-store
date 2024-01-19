@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import {
   Dialog,
   Disclosure,
@@ -16,6 +16,8 @@ import {
 import { ChevronDownIcon, BellIcon } from "@heroicons/react/20/solid";
 import { checkLoginStatus, isSignUpPage, isLoginPage } from "../../utils/Auth";
 import useProfile from "../../hooks/profile/Profile";
+import NotificationPage from "../../pages/home/NotificationPage";
+import { useNavigate } from 'react-router-dom';
 
 const products = [
   {
@@ -43,6 +45,15 @@ export default function NavbarComponents() {
   const isLoggedIn = checkLoginStatus();
   const signUpPage = isSignUpPage(location.pathname);
   const { profileData, isLoading, error } = useProfile();
+
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    // Clear token from sessionStorage
+    sessionStorage.removeItem("token");
+    // Navigate to the login page
+    navigate("/login");
+  };
 
   return (
     <header className="bg-white">
@@ -157,19 +168,43 @@ export default function NavbarComponents() {
             )
           ) : (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                className="relative rounded-full  p-1 text-orange-400 hover:bg-gray-200 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
+              {/* Button Notifikasi */}
+              <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+                <div className="relative ml-3">
+                  <Popover>
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          className={`${
+                            open ? "text-gray-900" : "text-gray-500"
+                          } relative flex items-center rounded-full bg-gray-200 p-1.5 focus:outline-none focus:ring focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800`}
+                        >
+                          <BellIcon className="h-6 w-6" aria-hidden="true" />
+                        </Popover.Button>
+
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Popover.Panel className="absolute z-10 top-full right-0 w-80 mt-2 -mr-4 overflow-hidden bg-white rounded-lg shadow-lg ring-1 ring-gray-900/5">
+                            <NotificationPage />
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
+                </div>
+              </div>
 
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <Menu.Button className="relative flex rounded-full bg-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     {profileData && (
@@ -205,7 +240,7 @@ export default function NavbarComponents() {
                         </a>
                       )}
                     </Menu.Item>
-                    <Menu.Item>
+                    {/* <Menu.Item>
                       {({ active }) => (
                         <a
                           href="#"
@@ -217,11 +252,12 @@ export default function NavbarComponents() {
                           Settings
                         </a>
                       )}
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item>
                       {({ active }) => (
                         <a
                           href="#"
+                          onClick={handleSignOut} // Call handleSignOut on click
                           className={classNames(
                             active ? "bg-gray-100" : "",
                             "block px-4 py-2 text-sm text-gray-700"
@@ -310,13 +346,13 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                 )}
               </Disclosure>
               <a
-                href="#"
+                href="/article"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
                 Blogs
               </a>
               <a
-                href="#"
+                href="/about"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
                 About
@@ -337,7 +373,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                   >
                     Profile
                   </a>
-                  {/* Tulisan Notifikasi */}
+                  {/* Tulisan Notifikasi
                   <div className="mt-2">
                     <a
                       href="/notifications"
@@ -345,7 +381,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                     >
                       Notifications
                     </a>
-                  </div>
+                  </div> */}
                 </div>
               ) : loginPage ? (
                 <a

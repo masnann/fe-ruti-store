@@ -1,5 +1,6 @@
-// SignUpForm.jsx
 import React from "react";
+import useRegisterApi from "../../hooks/auth/RegisterApi"; 
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
   const [email, setEmail] = React.useState("");
@@ -7,9 +8,22 @@ const SignUpForm = () => {
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const handleSubmit = (e) => {
+  const { register, isLoading, error } = useRegisterApi(); 
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+
+    try {
+      // Call the register function from the hook
+      await register(email, password, name, phone);
+
+      // Redirect to the login page upon successful registration
+      navigate("/login");
+    } catch (error) {
+      // Handle any errors if needed
+      console.error("Error during registration:", error);
+    }
   };
 
   return (
@@ -76,17 +90,21 @@ const SignUpForm = () => {
                 className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             <button
               type="submit"
               className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              disabled={isLoading} // Disable the button during loading
             >
-              Sign Up
+              {isLoading ? "Signing Up..." : "Sign Up"}
             </button>
+
+            {error && (
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            )}
 
             <p className="text-sm text-gray-500 text-center">
               Already have an account?{" "}
-              <a href="#" className="text-blue-500 hover:underline">
+              <a href="/login" className="text-blue-500 hover:underline">
                 Sign In
               </a>
             </p>
