@@ -17,22 +17,23 @@ import { ChevronDownIcon, BellIcon } from "@heroicons/react/20/solid";
 import { checkLoginStatus, isSignUpPage, isLoginPage } from "../../utils/Auth";
 import useProfile from "../../hooks/profile/Profile";
 import NotificationPage from "../../pages/home/NotificationPage";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
+// NavbarComponents.jsx
 const products = [
   {
-    name: "New Product",
+    name: "Koleksi Unggulan",
     description:
-      "Introducing our latest cutting-edge innovation, designed to revolutionize the way you experience technology.",
-    href: "#",
-    icon: ChartPieIcon,
-  },
-  {
-    name: "Top Product",
-    description:
-      "Our flagship product, delivering unparalleled performance and user satisfaction to elevate your digital experience.",
+      "Jelajahi koleksi unggulan kami yang memberikan kinerja dan gaya yang tak tertandingi",
     href: "#",
     icon: CursorArrowRaysIcon,
+  },
+  {
+    name: "Rekomendasi Khusus",
+    description:
+      "Dapatkan rekomendasi khusus dari Ruti Store. Pilih dari berbagai produk yang direkomendasikan untuk tampil trendy dan fashionable setiap saat.",
+    href: "#",
+    icon: ChartPieIcon,
   },
 ];
 
@@ -77,14 +78,14 @@ export default function NavbarComponents() {
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
             onClick={() => setMobileMenuOpen(true)}
           >
-            <span className="sr-only">Open main menu</span>
+            <span className="sr-only">Buka menu utama</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
-              Product
+              Produk
               <ChevronDownIcon
                 className="h-5 w-5 flex-none text-gray-400"
                 aria-hidden="true"
@@ -131,20 +132,23 @@ export default function NavbarComponents() {
 
             {/* Menu */}
           </Popover>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Blogs
+          <a
+            href="/article"
+            className="text-sm font-semibold leading-6 text-gray-900"
+          >
+            Artikel
           </a>
           <a
             href="/about"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
-            About
+            Tentang Kami
           </a>
           <a
             href="#contact"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
-            Contact
+            Kontak
           </a>
         </Popover.Group>
 
@@ -156,14 +160,14 @@ export default function NavbarComponents() {
                 href="/login"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
-                Login <span aria-hidden="true">&rarr;</span>
+                Masuk <span aria-hidden="true">&rarr;</span>
               </a>
             ) : (
               <a
                 href="/signup"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
-                Sign up <span aria-hidden="true">&rarr;</span>
+                Daftar <span aria-hidden="true">&rarr;</span>
               </a>
             )
           ) : (
@@ -206,7 +210,7 @@ export default function NavbarComponents() {
                 <div>
                   <Menu.Button className="relative flex rounded-full bg-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
+                    <span className="sr-only">Buka menu pengguna</span>
                     {profileData && (
                       <img
                         className="h-8 w-8 rounded-full"
@@ -236,7 +240,7 @@ export default function NavbarComponents() {
                             "block px-4 py-2 text-sm text-gray-700"
                           )}
                         >
-                          Your Profile
+                          Profil Kamu
                         </a>
                       )}
                     </Menu.Item>
@@ -263,7 +267,7 @@ export default function NavbarComponents() {
                             "block px-4 py-2 text-sm text-gray-700"
                           )}
                         >
-                          Sign out
+                          Keluar
                         </a>
                       )}
                     </Menu.Item>
@@ -310,7 +314,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
             className="-m-2.5 rounded-md p-2.5 text-gray-700"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <span className="sr-only">Close menu</span>
+            <span className="sr-only">Tutup Menu</span>
             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
@@ -321,7 +325,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                 {({ open }) => (
                   <>
                     <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                      Product
+                      Produk
                       <ChevronDownIcon
                         className={classNames(
                           open ? "rotate-180" : "",
@@ -349,19 +353,19 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                 href="/article"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
-                Blogs
+                Artikel
               </a>
               <a
                 href="/about"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
-                About
+                Tentang Kami
               </a>
               <a
                 href="#contact"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
-                Contact
+                Kontak
               </a>
             </div>
             <div className="py-6">
@@ -371,7 +375,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                     href="/profile"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
-                    Profile
+                    Profil Kamu
                   </a>
                   {/* Tulisan Notifikasi
                   <div className="mt-2">
@@ -388,14 +392,14 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                   href="/signup"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
-                  Sign Up
+                  Daftar
                 </a>
               ) : signUpPage ? (
                 <a
                   href="/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
-                  Sign In
+                  Masuk
                 </a>
               ) : null}
             </div>

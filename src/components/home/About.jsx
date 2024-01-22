@@ -1,82 +1,83 @@
 import React from "react";
 
 const AboutUs = () => {
-  const reasons = [
+  const alasan = [
     {
-      title: "Shopping Convenience",
+      title: "Kemudahan Berbelanja",
       description:
-        "Reach customers worldwide. Enjoy shopping convenience without geographical limitations.",
+        "Capai pelanggan di seluruh dunia. Nikmati kemudahan berbelanja tanpa batasan geografis.",
     },
     {
-      title: "24/7 Shopping Ease",
+      title: "Kemudahan Berbelanja 24/7",
       description:
-        "Shop anytime, anywhere. We provide non-stop shopping convenience at your fingertips",
+        "Berbelanja kapan saja, di mana saja. Kami menyediakan kemudahan berbelanja tanpa henti di ujung jari Anda.",
     },
     {
-      title: "Cost Efficiency",
+      title: "Efisiensi Biaya",
       description:
-        "Save on operational costs with our online presence. Focus on business growth, not expenses.",
+        "Hemat biaya operasional dengan keberadaan online kami. Fokuslah pada pertumbuhan bisnis, bukan pengeluaran.",
     },
   ];
 
   return (
-    // <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
-      <div className="bg-gray-100 p-4">
-      <h2 className="text-4xl font-bold mb-8 text-center">About Us</h2>
-      <div className="flex flex-col lg:flex-row lg:justify-center space-y-4 lg:space-y-0 lg:space-x-4 bg-white rounded-lg shadow-lg p-4 lg:p-8">
-        <div className="flex items-center justify-center lg:w-1/2 p-2">
-          <img
-            src="https://res.cloudinary.com/dufa4bel6/image/upload/v1702302550/disappear/pvkmms1w5dvw3o85vvqf.png"
-            alt="Gambar tentang kami"
-            className="w-full h-auto rounded-lg shadow-lg mb-8 lg:mb-0"
-          />
-        </div>
-        <div className="w-full lg:w-1/2 text-gray-600 p-4 lg:p-8">
-          <p className="font-bold">Welcome to Ruti Store</p>
-          <br></br>
-          <p>
-            At Ruti Store, we believe in the transformative power of online
-            shopping. Our journey began with a simple yet ambitious goal: to
-            provide a seamless and delightful shopping experience for every
-            customer.
-          </p>
-          <br></br>
-          <p>
-            We envision a world where everyone can access a diverse range of
-            high-quality products with just a click. Ruti Store is not just an
-            e-commerce platform; it's a destination where innovation meets
-            affordability.
-          </p>
-          <br></br>
-          <p>
-            Thank you for choosing Ruti Store. We look forward to serving you
-            with passion, dedication, and a touch of innovation.
-          </p>
-          <br></br>
-          <p className="font-bold">Happy Shopping!</p>
-        </div>
-      </div>
-
-      <h2 className="text-4xl font-bold text-center mt-12 mb-12">
-        Why Choose Us?
-      </h2>
-      <p className="text-center text-gray-600 mb-8 lg:w-2/3 mx-auto">
-        At Ruti Store, we take pride in providing an unparalleled online
-        shopping experience. Our commitment goes beyond products; it's about
-        delivering convenience, accessibility, and cost-efficient solutions to
-        our valued customers.
-      </p>
-
-      <div className="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-y-0 lg:space-x-8 mb-10">
-        {reasons.map((reason, index) => (
-          <div
-            key={index}
-            className="w-full lg:w-1/3 bg-white rounded-lg shadow-lg p-4 lg:p-8 text-center lg:text-left"
-          >
-            <h3 className="text-xl font-bold mb-4">{reason.title}</h3>
-            <p className="text-gray-600 mb-8">{reason.description}</p>
+    <div className="bg-gray-100 p-4">
+      <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
+        <h2 className="text-4xl font-bold mb-8 text-center">Tentang Kami</h2>
+        <div className="flex flex-col lg:flex-row lg:justify-center space-y-4 lg:space-y-0 lg:space-x-4 bg-white rounded-lg shadow-lg p-4 lg:p-8">
+          <div className="flex items-center justify-center lg:w-1/2 p-2">
+            <img
+              src="https://res.cloudinary.com/dufa4bel6/image/upload/v1702302550/disappear/pvkmms1w5dvw3o85vvqf.png"
+              alt="Gambar tentang kami"
+              className="w-full h-auto rounded-lg shadow-lg mb-8 lg:mb-0"
+            />
           </div>
-        ))}
+          <div className="w-full lg:w-1/2 text-gray-600 p-4 lg:p-8">
+            <p className="font-bold">Selamat datang di Ruti Store</p>
+            <br></br>
+            <p>
+              Di Ruti Store, kami percaya pada kekuatan transformatif dari
+              berbelanja online. Perjalanan kami dimulai dengan tujuan yang
+              sederhana namun ambisius: menyediakan pengalaman berbelanja yang
+              mulus dan menyenangkan bagi setiap pelanggan.
+            </p>
+            <br></br>
+            <p>
+              Kami membayangkan dunia di mana setiap orang dapat mengakses
+              berbagai produk berkualitas tinggi hanya dengan satu kali klik.
+              Ruti Store bukan hanya platform e-commerce; ini adalah tujuan di
+              mana inovasi bertemu dengan keterjangkauan.
+            </p>
+            <br></br>
+            <p>
+              Terima kasih telah memilih Ruti Store. Kami berharap dapat
+              melayani Anda dengan semangat, dedikasi, dan sentuhan inovatif.
+            </p>
+            <br></br>
+            <p className="font-bold">Selamat berbelanja!</p>
+          </div>
+        </div>
+
+        <h2 className="text-4xl font-bold text-center mt-12 mb-6">
+          Mengapa Memilih Kami?
+        </h2>
+        <p className="text-center text-gray-600 mb-8 lg:w-2/3 mx-auto">
+          Di Ruti Store, kami bangga menyediakan pengalaman berbelanja online
+          yang tak tertandingi. Komitmen kami tidak hanya tentang produk; ini
+          tentang memberikan kemudahan, aksesibilitas, dan solusi yang efisien
+          biaya bagi pelanggan kami yang berharga.
+        </p>
+
+        <div className="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-y-0 lg:space-x-8 mb-10">
+          {alasan.map((reason, index) => (
+            <div
+              key={index}
+              className="w-full lg:w-1/3 bg-white rounded-lg shadow-lg p-4 lg:p-8 text-center lg:text-left"
+            >
+              <h3 className="text-xl font-bold mb-4">{reason.title}</h3>
+              <p className="text-gray-600 mb-8">{reason.description}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

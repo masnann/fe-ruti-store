@@ -1,23 +1,24 @@
-// useArticleDetail.js
+// useProductDetail.js
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../utils/ApiConfig";
 
-const useArticleDetail = (articleId) => {
-  const [articleDetail, setArticleDetail] = useState(null);
+const useProductDetail = (productId) => {
+  const [productDetail, setProductDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchArticleDetail = async () => {
+    const fetchProductDetail = async () => {
       try {
-        console.log("Fetching article detail for articleId:", articleId);
+        console.log("Fetching product detail for productId:", productId);
         const response = await axios.get(
-          `${BASE_URL}/api/v1/article/details/${articleId}`
+          `${BASE_URL}/api/v1/product/details/${productId}`
         );
-        setArticleDetail(response.data.data);
+        setProductDetail(response.data.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching article detail:", error);
+        console.error("Error fetching product detail:", error);
 
         if (error.response) {
           setError(error.response.data.message || "An error occurred");
@@ -27,15 +28,15 @@ const useArticleDetail = (articleId) => {
         } else {
           setError("An error occurred while setting up the request");
         }
-      } finally {
+
         setLoading(false);
       }
     };
 
-    fetchArticleDetail();
-  }, [articleId]);
+    fetchProductDetail();
+  }, [productId]);
 
-  return { articleDetail, loading, error };
+  return { productDetail, loading, error };
 };
 
-export default useArticleDetail;
+export default useProductDetail;

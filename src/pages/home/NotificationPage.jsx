@@ -1,11 +1,12 @@
 import React from 'react';
 import useNotificationApi from "../../hooks/homepage/NotificationApi";
+import Loading from "../../components/modals/Loading";
 
 const NotificationPage = () => {
   const { notifications, isLoading, error } = useNotificationApi();
 
   if (isLoading) {
-    return <p>Loading notifications...</p>;
+    return <Loading />;
   }
 
   if (error) {
@@ -14,7 +15,7 @@ const NotificationPage = () => {
 
   return (
     <div className="p-4 max-w-sm">
-      <h1 className="text-xl font-bold mb-4">Notifications</h1>
+      <h1 className="text-xl font-bold mb-4">Notifikasi</h1>
       <ul className="divide-y divide-gray-300">
         {notifications.map((notification) => (
           <li key={notification.id} className="py-2">
@@ -24,7 +25,6 @@ const NotificationPage = () => {
                 <p className="text-gray-800 text-sm">{notification.message}</p>
                 <p className="text-gray-500 text-sm">{new Date(notification.created_at).toLocaleString()}</p>
               </div>
-
             </div>
           </li>
         ))}
