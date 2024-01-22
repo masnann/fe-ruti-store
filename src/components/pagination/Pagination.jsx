@@ -34,7 +34,7 @@ export function Pagination({ totalPages, currentPage, onChangePage }) {
           onClick={prev}
           disabled={currentPage === 1}
         >
-          Previous
+          Kembali
         </button>
         {[...Array(totalPages).keys()].map((index) => (
           <button key={index + 1} {...getItemProps(index + 1)}>
@@ -50,7 +50,7 @@ export function Pagination({ totalPages, currentPage, onChangePage }) {
           onClick={next}
           disabled={currentPage === totalPages}
         >
-          Next
+          Selanjutnya
         </button>
       </div>
     </div>

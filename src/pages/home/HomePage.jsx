@@ -42,7 +42,7 @@ const Home = () => {
 
       {/* Categories */}
       <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <h3 className="text-2xl font-bold mb-4">Categories</h3>
+        <h3 className="text-2xl font-bold mb-4">Kategori</h3>
         <Slider
           infinite={false}
           speed={500}
@@ -58,7 +58,7 @@ const Home = () => {
 
       {/* Products */}
       <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <h3 className="text-xl font-bold mb-4">Products</h3>
+        <h3 className="text-xl font-bold mb-4">Produk Terlaris</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {productData.map((product) => (
             <ProductItem key={product.id} product={product} />
