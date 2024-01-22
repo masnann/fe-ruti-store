@@ -8,6 +8,12 @@ import SignUpForm from "./pages/register/SignupPage";
 import SignInForm from "./pages/login/SigninPage";
 import GetAllArticle from "./pages/article/GetAllArticle";
 import DetailArticle from "./pages/article/DetailsArtilce";
+import CartPage from "./pages/order/CartPage";
+import ProductDetailPage from "./pages/product/DetailProductPage";
+import CheckoutPage from "./pages/order/CheckoutPage";
+import AddressSelectionPage from "./pages/profile/GetAddress";
+import GetAllProduct from "./pages/product/GetAllProduct";
+
 
 
 function App() {
@@ -23,6 +29,11 @@ function App() {
             <Route exact path="/about" element={<About />} />
             <Route exact path="/article" element={<GetAllArticle />} />
             <Route exact path="/article/details/:id" element={<DetailArticle />} />
+            <Route exact path="/order/cart" element={<CartPage />} />
+            <Route exact path="/order/checkout" element={<CheckoutPage />} />
+            <Route exact path="/product/" element={<GetAllProduct />} />
+            <Route exact path="/product/details/:id" element={<ProductDetailPage />} />
+            <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />            
           </Routes>
         </div>
         <Footer />
