@@ -1,13 +1,43 @@
 // SignInForm.jsx
-import React from "react";
+import React, { useState } from "react";
+import { login } from "../../hooks/auth/SignIn";
+import { useNavigate } from "react-router-dom";
 
 const SignInForm = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+    setIsLoading(true);
+
+    try {
+      const userData = await login(email, password);
+      setIsLoading(false);
+
+      // Authentication successful, you can redirect or perform other actions
+      console.log("Sign-in successful", userData);
+      setShowSuccessNotification(true);
+
+      // Redirect after 3 seconds
+      setTimeout(() => {
+        setShowSuccessNotification(false);
+        navigate("/");
+      }, 3000);
+
+      // Clear any previous errors
+      setError("");
+    } catch (error) {
+      // Handle authentication error, show error message, etc.
+      console.error("Sign-in failed", error.message);
+      setError(error.message);
+      setIsLoading(false); // Reset loading state in case of an error
+    }
   };
 
   return (
@@ -51,16 +81,23 @@ const SignInForm = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? "Signing In..." : "Sign In"}
             </button>
             <p className="text-sm text-gray-500 text-center">
               Need an account?{" "}
-              <a href="#" className="text-blue-500 hover:underline">
+              <a href="/signup" className="text-blue-500 hover:underline">
                 Sign Up
               </a>
             </p>
           </form>
+          {showSuccessNotification && (
+            <div className="bg-green-500 text-white rounded-md p-3 text-center">
+              Login successful! Redirecting...
+            </div>
+          )}
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </div>
     </div>

@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../utils/ApiConfig";
 
-const useProfileApi = () => {
-  const [profileData, setProfileData] = useState(null);
+const useNotificationApi = () => {
+  const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchNotifications = async () => {
       try {
         // Get the token from sessionStorage
         const token = sessionStorage.getItem("token");
@@ -22,18 +22,17 @@ const useProfileApi = () => {
           Authorization: `Bearer ${token}`,
         };
 
-        // Make the API request to get user profile using POST method
-        const response = await axios.post(
-          `${BASE_URL}/api/v1/user/get-profile`,
-          null, // Pass null as the request body since it's a GET request
+        // Make the API request to get notifications
+        const response = await axios.get(
+          `${BASE_URL}/api/v1/notification/list`,
           { headers }
         );
 
-        // Update the state with the profile data
-        setProfileData(response.data.data);
+        // Update the state with the notifications data
+        setNotifications(response.data.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching notification:", error);
 
         if (error.response) {
           // The request was made, but the server responded with a status code
@@ -52,11 +51,11 @@ const useProfileApi = () => {
       }
     };
 
-    // Call the fetchProfile function
-    fetchProfile();
+    // Call the fetchNotifications function
+    fetchNotifications();
   }, []); // Only run the effect once when the component mounts
 
-  return { profileData, isLoading, error };
+  return { notifications, isLoading, error };
 };
 
-export default useProfileApi;
+export default useNotificationApi;
