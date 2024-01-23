@@ -1,8 +1,8 @@
-// ProfilePage.jsx
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/sidebar/SidebarProfile";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import getUserProfile from "../../hooks/profile/GetProfileApi";
+import editUserProfile from "../../hooks/profile/EditProfileApi";
 
 const ProfilePage = () => {
   const [editedName, setEditedName] = useState("");
@@ -28,17 +28,32 @@ const ProfilePage = () => {
     fetchData();
   }, []);
 
-  const handleSaveClick = () => {
-    setEditedName("");
-    setEditedPhone("");
-    setEditedGender("");
-    setEditedProfilePicture(null);
+  const handleSaveClick = async () => {
+    try {
+      const formData = new FormData();
+      if (editedProfilePicture instanceof File) {
+        formData.append("photo", editedProfilePicture);
+      }
+      formData.append("name", editedName);
+      formData.append("phone", editedPhone);
+      formData.append("gender", editedGender);
+
+      // Call the API to update the profile
+      const response = await editUserProfile(formData);
+      console.log(response);
+
+      // Reload the page after a successful edit
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating profile:", error.message);
+    }
   };
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setEditedProfilePicture(URL.createObjectURL(file));
+      // Store the file object
+      setEditedProfilePicture(file);
     }
   };
 
@@ -65,7 +80,11 @@ const ProfilePage = () => {
             </h2>
             <div className="flex justify-center items-center relative">
               <img
-                src={editedProfilePicture || user.photo_profile}
+                src={
+                  editedProfilePicture instanceof File
+                    ? URL.createObjectURL(editedProfilePicture)
+                    : editedProfilePicture || user.photo_profile
+                }
                 alt="Foto Profil"
                 className="w-24 h-24 rounded-full object-cover cursor-pointer"
                 onClick={handleProfilePictureClick}
