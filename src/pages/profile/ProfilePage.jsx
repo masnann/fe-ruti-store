@@ -1,34 +1,37 @@
-import React, { useState, useRef } from "react";
+// ProfilePage.jsx
+import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/sidebar/SidebarProfile";
 import { PencilIcon } from "@heroicons/react/20/solid";
+import getUserProfile from "../../hooks/profile/GetProfileApi";
 
 const ProfilePage = () => {
   const [editedName, setEditedName] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
   const [editedGender, setEditedGender] = useState("");
-  const [editedBirthdate, setEditedBirthdate] = useState("");
   const [editedProfilePicture, setEditedProfilePicture] = useState(null);
-
-  const user = {
-    username: "ContohPengguna",
-    email: "pengguna@contoh.com",
-    phone: "08123456789",
-    profilePicture: "https://placekitten.com/150/150",
-    createdAt: "0001-01-01T00:00:00Z",
-    gender: "Male",
-    birthdate: "2000-01-01",
-  };
-
+  const [user, setUser] = useState({});
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = await getUserProfile();
+        setUser(userData);
+
+        // Set the gender based on the API response
+        setEditedGender(userData.gender || "");
+      } catch (error) {
+        console.error("Error fetching user profile:", error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleSaveClick = () => {
-    // Add logic to save changes to backend or update state
-    // Update user information in your state or API
-    // Reset the edited values after saving
     setEditedName("");
     setEditedPhone("");
     setEditedGender("");
-    setEditedBirthdate("");
     setEditedProfilePicture(null);
   };
 
@@ -44,6 +47,11 @@ const ProfilePage = () => {
     fileInputRef.current.click();
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("id-ID", options);
+  };
+
   return (
     <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
       <div className="container mx-auto lg:px-8 lg:max-w-7xl">
@@ -57,7 +65,7 @@ const ProfilePage = () => {
             </h2>
             <div className="flex justify-center items-center relative">
               <img
-                src={editedProfilePicture || user.profilePicture}
+                src={editedProfilePicture || user.photo_profile}
                 alt="Foto Profil"
                 className="w-24 h-24 rounded-full object-cover cursor-pointer"
                 onClick={handleProfilePictureClick}
@@ -86,7 +94,7 @@ const ProfilePage = () => {
                 <input
                   type="text"
                   id="editedName"
-                  value={editedName || user.username}
+                  value={editedName || user.name}
                   onChange={(e) => setEditedName(e.target.value)}
                   className="border rounded-md p-2 w-full mb-4 mt-2"
                 />
@@ -103,56 +111,47 @@ const ProfilePage = () => {
                   onChange={(e) => setEditedPhone(e.target.value)}
                   className="border rounded-md p-2 w-full mb-4 mt-2"
                 />
-                <label
-                  htmlFor="editedEmail"
-                  className="text-sm font-medium mb-2"
-                >
-                  Alamat Email:
-                </label>
-                <input
-                  type="text"
-                  id="editedEmail"
-                  value={user.email}
-                  readOnly
-                  className="border rounded-md p-2 w-full mb-4 bg-gray-200 mt-2"
-                />
                 <label className="text-sm font-medium mb-2">
                   Jenis Kelamin:
                 </label>
                 <div className="flex items-center space-x-2 mb-4 mt-2">
-                  <label>
+                  <label className="flex items-center space-x-1">
                     <input
                       type="radio"
                       value="Male"
                       checked={editedGender === "Male"}
                       onChange={() => setEditedGender("Male")}
                     />
-                    &nbsp;Laki-Laki
+                    <span className="ml-1">Laki-Laki</span>
                   </label>
-                  <label>
+                  <label className="flex items-center space-x-1">
                     <input
                       type="radio"
                       value="Female"
                       checked={editedGender === "Female"}
                       onChange={() => setEditedGender("Female")}
                     />
-                    &nbsp;Perempuan
+                    <span className="ml-1">Perempuan</span>
                   </label>
                 </div>
-                <label
-                  htmlFor="editedBirthdate"
-                  className="text-sm font-medium mb-2"
-                >
-                  Tanggal Lahir:
+                <label className="text-sm font-medium mb-2">Email:</label>
+                <input
+                  type="text"
+                  id="editedEmail"
+                  value={user.email || ""}
+                  readOnly
+                  className="border rounded-md p-2 w-full mb-4 mt-2 bg-gray-100"
+                />
+                <label className="text-sm font-medium mb-2">
+                  Tanggal Dibuat:
                 </label>
                 <input
-                  type="date"
-                  id="editedBirthdate"
-                  value={editedBirthdate || user.birthdate}
-                  onChange={(e) => setEditedBirthdate(e.target.value)}
-                  className="border rounded-md p-2 w-full mb-4 mt-2"
+                  type="text"
+                  id="created_at"
+                  value={formatDate(user.created_at) || ""}
+                  readOnly
+                  className="border rounded-md p-2 w-full mb-4 mt-2 bg-gray-100"
                 />
-
                 <div className="mt-2">
                   <button
                     className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full sm:w-auto"
