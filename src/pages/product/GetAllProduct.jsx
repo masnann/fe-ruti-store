@@ -40,24 +40,30 @@ const GetAllProduct = () => {
     navigate(`/product/details/${productId}`);
   };
 
+  if (loading) {
+    // Tampilkan modal loading selama data masih diambil
+    return <Loading />;
+  }
+
   return (
     <div className="bg-gray-100 p-4">
       <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <h2 className="text-2xl font-bold mb-4">Produk</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Produk</h2>
+          <input
+            type="text"
+            placeholder="Cari produk..."
+            className="border px-4 py-2 rounded-md"
+          />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading ? (
-            <Loading />
-          ) : error ? (
-            <p>Error: {error.message}</p>
-          ) : (
-            products.map((product) => (
-              <ProductItem
-                key={product.id}
-                product={product}
-                onClick={() => handleProductClick(product.id)}
-              />
-            ))
-          )}
+          {products.map((product) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              onClick={() => handleProductClick(product.id)}
+            />
+          ))}
         </div>
         <Pagination
           totalPages={totalPages}

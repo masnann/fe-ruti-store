@@ -1,37 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { fetchHomePageContent } from "../../hooks/homepage/Home";
-import Carousel from "../../components/carousel/Carousel"
-import CategoryItem from "../../components/home/Category"
-import ProductItem from "../../components/home/ProductItem"
+import Carousel from "../../components/carousel/Carousel";
+import CategoryItem from "../../components/home/Category";
+import ProductItem from "../../components/home/ProductItem";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import getCarouselList from "../../hooks/homepage/CarouselApi";
+import getCategoryList from "../../hooks/homepage/CategoryApi";
+import { getProducts } from "../../hooks/products/GetAllProduct";
+import { Link } from "react-router-dom";
+import Loading from "../../components/modals/Loading"; 
 
 const Home = () => {
   const [carouselData, setCarouselData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [productData, setProductData] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const fetchData = async () => {
+      try {
+        const carouselResponse = await getCarouselList();
+        setCarouselData(carouselResponse.data);
 
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+        const productResponse = await getProducts();
+        setProductData(productResponse.data);
 
-    fetchHomePageContent(token)
-      .then((data) => {
-        setCarouselData(data.carousel);
-        setCategoryData(data.category);
-        setProductData(data.product);
-      })
-      .catch((error) => {
+        const categoryResponse = await getCategoryList();
+        setCategoryData(categoryResponse.data);
+
+        setLoading(false);
+      } catch (error) {
         console.error("Error fetching data:", error.message);
-      });
-  }, [navigate]);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto">
@@ -39,7 +49,6 @@ const Home = () => {
       <div className="mb-8">
         <Carousel data={carouselData} />
       </div>
-
       {/* Categories */}
       <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <h3 className="text-2xl font-bold mb-4">Kategori</h3>
@@ -58,7 +67,12 @@ const Home = () => {
 
       {/* Products */}
       <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <h3 className="text-xl font-bold mb-4">Produk Terlaris</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-2xl font-bold">Produk Baru</h3>
+          <Link to="/product" className="text-blue-500 hover:underline">
+            Lihat Semua
+          </Link>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {productData.map((product) => (
             <ProductItem key={product.id} product={product} />
