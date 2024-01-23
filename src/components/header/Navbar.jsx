@@ -65,13 +65,10 @@ export default function NavbarComponents() {
         <div className="flex lg:flex-1">
           <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Ruti Store</span>
-            <img
-              className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt=""
-            />
+            <span className="text-blue-600 font-extrabold">RUTI STORE</span>
           </a>
         </div>
+
         <div className="flex lg:hidden">
           <button
             type="button"
