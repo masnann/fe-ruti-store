@@ -3,6 +3,7 @@ import Sidebar from "../../components/sidebar/SidebarProfile";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import getUserProfile from "../../hooks/profile/GetProfileApi";
 import editUserProfile from "../../hooks/profile/EditProfileApi";
+import Loading from "../../components/modals/Loading";
 
 const ProfilePage = () => {
   const [editedName, setEditedName] = useState("");
@@ -11,6 +12,7 @@ const ProfilePage = () => {
   const [editedProfilePicture, setEditedProfilePicture] = useState(null);
   const [user, setUser] = useState({});
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,8 +22,10 @@ const ProfilePage = () => {
 
         // Set the gender based on the API response
         setEditedGender(userData.gender || "");
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching user profile:", error.message);
+        setLoading(false);
       }
     };
 
@@ -66,6 +70,10 @@ const ProfilePage = () => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
