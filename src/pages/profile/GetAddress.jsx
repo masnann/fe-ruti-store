@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { PencilIcon } from "@heroicons/react/20/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 import AddAddressForm from "../../components/modals/AddAddress";
 import EditAddressForm from "../../components/modals/EditAddress";
 import Sidebar from "../../components/sidebar/SidebarProfile";
 import getAddressList from "../../hooks/profile/GetAddressApi";
 import Loading from "../../components/modals/Loading";
+import Modal from "react-modal"; 
+
+Modal.setAppElement("#root");
 
 const AddressSelectionPage = () => {
   const navigate = useNavigate();
@@ -13,7 +16,7 @@ const AddressSelectionPage = () => {
   const [isEditAddressModalOpen, setEditAddressModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +32,7 @@ const AddressSelectionPage = () => {
     };
 
     fetchData();
-  }, []); // Empty dependency array to run only once on component mount
+  }, []); 
 
   const handleAddAddress = () => {
     setAddAddressModalOpen(true);
@@ -41,7 +44,6 @@ const AddressSelectionPage = () => {
   };
 
   const handleEditAddress = (editedAddress) => {
-    // Implement your logic when the "Edit" button is clicked
     console.log("Edit Address:", editedAddress);
     setEditAddressModalOpen(false);
   };
@@ -58,6 +60,9 @@ const AddressSelectionPage = () => {
     return <Loading />;
   }
 
+  const handleDeleteAddress = (deletedAddress) => {
+    console.log("Delete Address:", deletedAddress);
+  };
 
   return (
     <div className="bg-gray-100 p-4">
@@ -88,13 +93,23 @@ const AddressSelectionPage = () => {
                   )}
                   {/* Tombol "Edit" */}
                   <button
-                    className="absolute top-2 right-2 p-2 bg-gray-200 rounded-full"
+                    className="absolute top-2 right-8 p-2 bg-gray-200 rounded-full mr-4"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEditAddress(address);
                     }}
                   >
                     <PencilIcon className="h-4 w-4 text-gray-600" />
+                  </button>
+                  {/* Tombol "Delete" */}
+                  <button
+                    className="absolute top-2 right-2 p-2 bg-red-200 rounded-full ml-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAddress(address);
+                    }}
+                  >
+                    <TrashIcon className="h-4 w-4 text-red-600" />
                   </button>
                 </div>
               ))}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import useNotificationApi from "../../hooks/homepage/NotificationApi";
 import Loading from "../../components/modals/Loading";
 
@@ -21,9 +21,21 @@ const NotificationPage = () => {
           <li key={notification.id} className="py-2">
             <div className={`flex items-start justify-between`}>
               <div className="flex-1">
-                <p className="text-black mb-1 font-semibold">{notification.title}</p>
+                <p className="text-blue-600 mb-1 font-semibold">
+                  {notification.title}
+                </p>
                 <p className="text-gray-800 text-sm">{notification.message}</p>
-                <p className="text-gray-500 text-sm">{new Date(notification.created_at).toLocaleString()}</p>
+                <p className="text-gray-400 text-sm mt-2 float-end">
+                  {new Intl.DateTimeFormat("en-US", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                    timeZone: "UTC", // Sesuaikan dengan zona waktu dari API
+                  }).format(new Date(notification.created_at))}
+                </p>
               </div>
             </div>
           </li>

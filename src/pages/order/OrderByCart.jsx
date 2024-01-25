@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import useProductDetail from "../../hooks/products/DetailsProduct";
-import Loading from "../../components/modals/Loading";
 import getAddressList from "../../hooks/profile/GetAddressApi";
-import createOrder from "../../hooks/order/OrderApi";
+import { useNavigate, useLocation } from "react-router-dom";
+import createOrderFromCart from "../../hooks/order/CreateOrderByCartApi";
+import Loading from "../../components/modals/Loading";
 
-const CheckoutPage = () => {
-  const location = useLocation();
-  const { state } = location;
+const OrderByCart = () => {
+  const { state } = useLocation();
 
-  const token = sessionStorage.getItem("token");
-  const navigate = useNavigate();
-
+  const [selectedCart, setSelectedCart] = useState(state?.selectedCart || []);
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [note, setNote] = useState("");
+  const [totalPriceWithoutDiscount, setTotalPriceWithoutDiscount] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
   const [totalPayment, setTotalPayment] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -25,8 +25,10 @@ const CheckoutPage = () => {
         const primaryAddress =
           data.data.find((addr) => addr.is_primary) || data.data[0];
         setSelectedAddress(primaryAddress);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching addresses:", error);
+        setLoading(false);
       }
     };
 
@@ -34,92 +36,70 @@ const CheckoutPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-  }, [token, navigate]);
+    calculateTotals();
+  }, [selectedCart]);
 
-  const { productId, selectedSize, quantity } =
-    state && state.orderDetails ? state.orderDetails : {};
+  const calculateTotals = () => {
+    let totalPrice = 0;
+    let totalDiscountAmount = 0;
 
-  const { productDetail, loading, error } = useProductDetail(productId);
+    selectedCart.forEach((item) => {
+      const itemPrice = item.product.price * item.quantity;
+      const itemDiscount = item.product.discount * item.quantity;
 
-  useEffect(() => {
-    if (productDetail) {
-      const productPrice = productDetail.price || 0;
-      const adminFee = 2000;
-      const shippingFee = 0;
+      totalPrice += itemPrice;
+      totalDiscountAmount += itemDiscount;
+    });
 
-      const discountPerProduct = productDetail.discount || 0;
-      const totalDiscount = discountPerProduct * quantity;
+    setTotalPriceWithoutDiscount(totalPrice);
+    setTotalDiscount(totalDiscountAmount);
 
-      const totalPrice =
-        productPrice * quantity - totalDiscount + adminFee + shippingFee;
+    const adminFee = 2000;
+    const shippingFee = 0; 
 
-      setTotalPayment(totalPrice);
-    }
-  }, [productDetail, quantity]);
+    const totalPaymentAmount =
+      totalPrice - totalDiscountAmount + adminFee + shippingFee;
+    setTotalPayment(totalPaymentAmount);
+    setLoading(false);
+  };
 
   const handleNoteChange = (e) => {
     setNote(e.target.value);
   };
 
+  const handleCheckout = async () => {
+    try {
+      if (!selectedAddress) {
+        alert("Mohon pilih alamat pengiriman!");
+        return;
+      }
+
+      const checkoutData = {
+        address_id: selectedAddress.id,
+        note: note,
+        cart_items: selectedCart.map((item) => ({
+          id: item.id,
+        })),
+      };
+
+      const response = await createOrderFromCart(checkoutData);
+
+      if (response && response.data && response.data.redirect_url) {
+        window.open(response.data.redirect_url, "_blank");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+    }
+  };
   if (loading) {
     return <Loading />;
   }
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!productDetail) {
-    return <p>Product not found</p>;
-  }
-
-  const handleCheckout = async () => {
-    try {
-      if (!selectedAddress) {
-        alert("Pilih alamat terlebih dahulu");
-        return;
-      }
-
-      // Data pesanan
-      const orderData = {
-        address_id: selectedAddress.id,
-        product_id: productId,
-        size: selectedSize,
-        quantity,
-        note,
-      };
-      console.log("Data Pesanan:", orderData);
-
-      // Membuat pesanan
-      const orderResponse = await createOrder(orderData);
-
-      if (orderResponse.message === "Order created successfully") {
-        // Pesanan berhasil dibuat, arahkan pengguna ke redirect_url
-        alert("Pesanan berhasil dibuat!");
-        if (orderResponse.data.redirect_url) {
-          window.location.href = orderResponse.data.redirect_url;
-        } else {
-          alert("Redirect URL tidak tersedia");
-        }
-      } else {
-        // Gagal membuat pesanan, tanggapi sesuai kebutuhan
-        alert(`Gagal membuat pesanan: ${orderResponse.message}`);
-      }
-    } catch (error) {
-      console.error("Error during checkout:", error);
-      alert("Terjadi kesalahan saat melakukan pembayaran. Silakan coba lagi.");
-    }
-  };
-
   return (
-    <div className="container mx-auto bg-gray-100 p-4">
-      <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+    <div className="bg-gray-100 p-4">
+      <div className="container mx-auto p-4 mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
         {/* Alamat */}
-        <div className="bg-white p-8 rounded-md shadow-md">
+        <div className="bg-white p-8 rounded-md shadow-md mb-4">
           <h1 className="font-semibold text-lg mb-2">Alamat Pengiriman</h1>
           {selectedAddress && (
             <>
@@ -141,40 +121,38 @@ const CheckoutPage = () => {
             </>
           )}
         </div>
-      </div>
 
-      {/* Produk */}
-      <div className="lg:px-8 lg:mx-auto lg:max-w-7xl">
-        <div className="bg-white rounded-md shadow-md">
+        {/* Produk */}
+        <div className="bg-white rounded-md shadow-md mb-4">
           <div className="p-8">
             <h2 className="font-bold text-lg mb-4">Produk</h2>
-            {productDetail && (
-              <div className="flex flex-col md:flex-row">
+            {selectedCart.map((item) => (
+              <div className="flex flex-col md:flex-row mb-4" key={item.id}>
                 <div className="w-full md:w-40 md:h-40 mb-4 md:mb-0">
                   <img
-                    src={productDetail.photos[0].url}
-                    alt={productDetail.name}
+                    src={item.product.product_photos[0].url}
+                    alt={item.product.name}
                     className="w-full h-full object-cover max-w-full max-h-full"
                   />
                 </div>
                 <div className="md:ml-4 flex-1">
                   <div className="flex justify-between">
                     <p className="font-semibold text-base mb-2">
-                      {productDetail.name}
+                      {item.product.name}
                     </p>
                     <p className="font-semibold text-base mb-2">
-                      Rp. {productDetail.price}
+                      Rp. {item.product.price}
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-base">Diskon: </p>
-                    <p className="text-base">Rp. {productDetail.discount}</p>
+                    <p className="text-base">Rp. {item.product.discount}</p>
                   </div>
-                  <p className="text-base mb-2">Ukuran: {selectedSize}</p>
-                  <p className="text-base mb-2">Jumlah: {quantity}</p>
+                  <p className="text-base mb-2">Ukuran: {item.size}</p>
+                  <p className="text-base mb-2">Jumlah: {item.quantity}</p>
                 </div>
               </div>
-            )}
+            ))}
             <div className="mb-4 mt-4">
               <label
                 htmlFor="note"
@@ -195,16 +173,11 @@ const CheckoutPage = () => {
 
             <div className="flex justify-between mt-4">
               <p className="text-base mb-2">Subtotal Biaya Produk:</p>
-              <p className="text-base">
-                Rp {productDetail ? productDetail.price * quantity : 0}
-              </p>
+              <p className="text-base">Rp {totalPriceWithoutDiscount}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-base mb-2">Subtotal Diskon Produk:</p>
-              <p className="text-base">
-                {" "}
-                Rp {productDetail ? productDetail.discount * quantity : 0}
-              </p>
+              <p className="text-base">Rp {totalDiscount}</p>
             </div>
 
             <div className="flex justify-between mb-2">
@@ -221,10 +194,8 @@ const CheckoutPage = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Tombol Bayar Sekarang */}
-      <div className="mt-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
+        {/* Tombol Bayar Sekarang */}
         <button
           className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 font-bold py-2 px-4 rounded float-end mb-4"
           onClick={handleCheckout}
@@ -236,4 +207,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default OrderByCart;
