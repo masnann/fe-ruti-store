@@ -26,14 +26,14 @@ const products = [
     name: "Koleksi Unggulan",
     description:
       "Jelajahi koleksi unggulan kami yang memberikan kinerja dan gaya yang tak tertandingi",
-    href: "#",
+    href: "/product",
     icon: CursorArrowRaysIcon,
   },
   {
     name: "Rekomendasi Khusus",
     description:
       "Dapatkan rekomendasi khusus dari Ruti Store. Pilih dari berbagai produk yang direkomendasikan untuk tampil trendy dan fashionable setiap saat.",
-    href: "#",
+    href: "product/recommendation",
     icon: ChartPieIcon,
   },
 ];
