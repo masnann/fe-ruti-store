@@ -12,6 +12,7 @@ import {
   ChartPieIcon,
   CursorArrowRaysIcon,
   XMarkIcon,
+  ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, BellIcon } from "@heroicons/react/20/solid";
 import { checkLoginStatus, isSignUpPage, isLoginPage } from "../../utils/Auth";
@@ -25,14 +26,14 @@ const products = [
     name: "Koleksi Unggulan",
     description:
       "Jelajahi koleksi unggulan kami yang memberikan kinerja dan gaya yang tak tertandingi",
-    href: "#",
+    href: "/product",
     icon: CursorArrowRaysIcon,
   },
   {
     name: "Rekomendasi Khusus",
     description:
       "Dapatkan rekomendasi khusus dari Ruti Store. Pilih dari berbagai produk yang direkomendasikan untuk tampil trendy dan fashionable setiap saat.",
-    href: "#",
+    href: "product/recommendation",
     icon: ChartPieIcon,
   },
 ];
@@ -169,6 +170,19 @@ export default function NavbarComponents() {
             )
           ) : (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              {/* Button Keranjang */}
+              <div className="ml-3 lg:ml-4">
+                <button
+                  className="relative flex items-center rounded-full bg-gray-200 text-sm p-2 focus:outline-none focus:ring focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  onClick={() => {
+                    navigate('/order/cart');
+                  }}
+                >
+                  <span className="absolute -inset-1.5" />
+                  <span className="sr-only">Buka keranjang</span>
+                  <ShoppingCartIcon className="h-5 w-5" />
+                </button>
+              </div>
               {/* Button Notifikasi */}
               <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                 <div className="relative ml-3">
