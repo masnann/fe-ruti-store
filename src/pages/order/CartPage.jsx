@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import getCartList from "../../hooks/order/GetCartApi";
-import Loading from "../../components/modals/Loading";
+import deleteCartItem from "../../hooks/order/DeleteCartApi";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showLoadingModal, setShowLoadingModal] = useState(true);
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -15,7 +14,7 @@ const CartPage = () => {
         setCartItems(
           cartData.data.map((item) => ({
             ...item,
-            discount: item.product.discount,
+            discount: item.product.discount || 0, 
             selected: false,
           }))
         );
@@ -23,8 +22,6 @@ const CartPage = () => {
       } catch (error) {
         setError(error.message);
         setIsLoading(false);
-      } finally {
-        setShowLoadingModal(false);
       }
     };
 
@@ -33,16 +30,19 @@ const CartPage = () => {
 
   const selectedItems = cartItems.filter((item) => item.selected);
 
-  const totalPriceWithoutDiscount = cartItems.reduce(
+  // Menghitung total harga produk tanpa diskon
+  const totalPriceWithoutDiscount = selectedItems.reduce(
     (total, item) => total + item.product.price * item.quantity,
     0
   );
 
-  const totalDiscount = cartItems.reduce(
+  // Menghitung total diskon yang diterapkan pada keranjang
+  const totalDiscount = selectedItems.reduce(
     (total, item) => total + item.discount * item.quantity,
     0
   );
 
+  // Menghitung total harga produk dengan diskon
   const totalPriceWithDiscount = totalPriceWithoutDiscount - totalDiscount;
 
   const updateQuantity = (itemId, newQuantity) => {
@@ -63,14 +63,23 @@ const CartPage = () => {
     );
   };
 
-  const removeItem = (itemId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  const removeItem = async (itemId) => {
+    try {
+      await deleteCartItem(itemId);
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.id !== itemId)
+      );
+      // Memuat ulang halaman setelah berhasil menghapus item
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
+      // Handle error jika gagal menghapus item
+    }
   };
 
   return (
     <div className="bg-gray-100 p-4">
-      {showLoadingModal && <Loading />}
-      <div className="container mx-auto p-4 mb-2 lg:px-8 lg:mx-auto lg:max-w-7xl">
+      <div className="container mx-auto p-4 mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <h1 className="text-3xl font-semibold mb-6">Keranjang Belanja</h1>
 
         {isLoading && <p>Loading...</p>}
@@ -107,7 +116,8 @@ const CartPage = () => {
                 <p className="text-gray-600">Ukuran: {item.size}</p>
 
                 <p className="text-gray-600">
-                  Subtotal: Rp. {item.product.price * item.quantity}
+                  Subtotal: Rp.{" "}
+                  {(item.product.price - item.discount) * item.quantity}
                 </p>
                 <div className="flex items-center mb-4 mt-4">
                   <p className="text-gray-600 mr-2">Kuantitas:</p>
@@ -147,28 +157,28 @@ const CartPage = () => {
         {cartItems.length > 0 && (
           <div className="bg-white p-8 rounded-md shadow-md mt-4">
             <h2 className="text-xl font-semibold mb-2">Total Harga</h2>
+
             <div className="flex justify-between mb-2">
               <p className="text-gray-600">Total Harga Tanpa Diskon:</p>
               <p className="text-gray-600">Rp. {totalPriceWithoutDiscount}</p>
             </div>
+
             <div className="flex justify-between mb-2">
               <p className="text-gray-600">Total Diskon:</p>
               <p className="text-gray-600">Rp. {totalDiscount}</p>
             </div>
+
             <div className="flex justify-between mb-2">
-              <p className="text-gray-600 font-semibold">Total Harga Dengan Diskon:</p>
+              <p className="text-gray-600">Total Harga Dengan Diskon:</p>
               <p className="text-gray-600 font-semibold">Rp. {totalPriceWithDiscount}</p>
             </div>
           </div>
         )}
-      </div>
-      {/* Tombol Bayar Sekarang */}
-      <div className="mt-2 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <button
-          className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 font-bold py-2 px-4 rounded float-end mb-4"
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 float-end mb-4"
           onClick={() => alert("Checkout button clicked")}
         >
-          Bayar Sekarang
+          Checkout
         </button>
       </div>
     </div>
