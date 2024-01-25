@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import getCartList from "../../hooks/order/GetCartApi";
 import deleteCartItem from "../../hooks/order/DeleteCartApi";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
+  const navigate = useNavigate();
+
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCart, setSelectedCart] = useState([]);
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -14,7 +18,7 @@ const CartPage = () => {
         setCartItems(
           cartData.data.map((item) => ({
             ...item,
-            discount: item.product.discount || 0, 
+            discount: item.product.discount || 0,
             selected: false,
           }))
         );
@@ -60,6 +64,12 @@ const CartPage = () => {
       prevItems.map((item) =>
         item.id === itemId ? { ...item, selected: !item.selected } : item
       )
+    );
+
+    setSelectedCart((prevSelected) =>
+      prevSelected.includes(itemId)
+        ? prevSelected.filter((id) => id !== itemId)
+        : [...prevSelected, itemId]
     );
   };
 
@@ -170,13 +180,19 @@ const CartPage = () => {
 
             <div className="flex justify-between mb-2">
               <p className="text-gray-600">Total Harga Dengan Diskon:</p>
-              <p className="text-gray-600 font-semibold">Rp. {totalPriceWithDiscount}</p>
+              <p className="text-gray-600 font-semibold">
+                Rp. {totalPriceWithDiscount}
+              </p>
             </div>
           </div>
         )}
         <button
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 float-end mb-4"
-          onClick={() => alert("Checkout button clicked")}
+          onClick={() =>
+            navigate("/order/checkout/cart", {
+              state: { selectedCart: selectedItems },
+            })
+          }
         >
           Checkout
         </button>
