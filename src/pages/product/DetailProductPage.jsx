@@ -3,13 +3,37 @@ import { useParams } from "react-router-dom";
 import { StarIcon } from "@heroicons/react/20/solid";
 import useProductDetail from "../../hooks/products/DetailsProduct";
 import Loading from "../../components/modals/Loading";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { productDetail, loading, error } = useProductDetail(id);
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    // Check if all required information is available
+    if (productDetail && selectedSize && quantity) {
+      navigate("/order/checkout", {
+        state: {
+          orderDetails: {
+            productId: productDetail.id,
+            selectedSize,
+            quantity,
+          },
+        },
+      });
+    } else {
+      alert("Please select size and quantity before checking out.");
+    }
+  };
 
   const [active, setActive] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+  };
 
   useEffect(() => {
     if (productDetail) {
@@ -51,14 +75,16 @@ const ProductDetailPage = () => {
     <StarIcon key={index} className="w-5 h-5 text-gray-300" />
   ));
 
+  const availableSizes = productDetail.size.split(",");
+
   return (
-    <div className="bg-gray-100 p-4">
-      <div className="container mx-auto p-4">
+    <div className="container mx-auto bg-gray-100 p-4">
+      <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <div className="bg-white p-8 rounded-md shadow-md">
           <div className="flex flex-col md:flex-row">
             <div className="mb-4 md:mr-4 md:w-1/2">
               <img
-                className="w-full h-auto rounded-lg object-cover object-center"
+                className="w-full h-80 md:max-w-full md:h-auto rounded-lg object-cover object-center"
                 src={active}
                 alt=""
               />
@@ -68,7 +94,7 @@ const ProductDetailPage = () => {
                     <img
                       onClick={() => setActive(photo.url)}
                       src={photo.url}
-                      className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
+                      className="h-24 w-24 max-w-full cursor-pointer rounded-lg object-cover object-center"
                       alt={`gallery-image-${index}`}
                     />
                   </div>
@@ -80,7 +106,7 @@ const ProductDetailPage = () => {
                 <h2 className="text-xl md:text-3xl font-semibold mb-2 md:mb-0">
                   {productDetail.name}
                 </h2>
-                <p className="mb-2 md:mb-0 text-orange-600 font-semibold">
+                <p className="mb-2 md:mb-0 text-red-500 font-semibold">
                   Rp. {productDetail.price.toFixed(2)}
                 </p>
               </div>
@@ -92,7 +118,7 @@ const ProductDetailPage = () => {
                   </div>
                   <p className="ml-2 text-sm md:ml-4">{productDetail.rating}</p>
                 </div>
-                <p className="text-sm md:ml-4">
+                <p className="text-sm md:ml-4 text-orange-500">
                   Diskon: Rp.{productDetail.discount}
                 </p>
               </div>
@@ -102,6 +128,27 @@ const ProductDetailPage = () => {
               <p className="text-gray-700 mb-4 text-sm">
                 Stok: {productDetail.stock}
               </p>
+              <div className="flex items-center">
+                <p className="text-gray-700 mb-4 text-sm mr-2">Ukuran:</p>
+                {availableSizes.length > 1 && (
+                  <div className="flex items-center ml-2 mb-4">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        className={`${
+                          selectedSize === size
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-300 text-gray-700"
+                        } px-2 py-1 rounded-md mr-2`}
+                        onClick={() => handleSizeChange(size)}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-col md:flex-row items-center mb-4">
                 <div className="flex items-center mb-2 md:mb-0">
                   <button
@@ -122,7 +169,7 @@ const ProductDetailPage = () => {
                   className="bg-blue-500 text-white ml-0 mt-2 md:ml-6 md:mt-0 px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full md:w-auto"
                   onClick={() => alert("Add to Cart button clicked")}
                 >
-                 Tambah ke keranjang
+                  Tambah ke keranjang
                 </button>
               </div>
 
@@ -144,9 +191,9 @@ const ProductDetailPage = () => {
               </div>
               <button
                 className="bg-blue-500 text-white px-10 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full"
-                onClick={() => alert("Buy Now button clicked")}
+                onClick={handleCheckout}
               >
-                Beli sekarang
+                Beli Sekarang
               </button>
             </div>
           </div>
