@@ -1,38 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import getCartList from "../../hooks/order/GetCartApi";
+import Loading from "../../components/modals/Loading";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Product 1",
-      price: 19.99,
-      quantity: 2,
-      image: "https://placekitten.com/150/150", // URL gambar produk
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 29.99,
-      quantity: 1,
-      image: "https://placekitten.com/150/150", // URL gambar produk
-      selected: false,
-    },
-    // Tambahkan item lainnya sesuai kebutuhan
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showLoadingModal, setShowLoadingModal] = useState(true);
 
-  // Filter produk yang dipilih
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const cartData = await getCartList();
+        setCartItems(
+          cartData.data.map((item) => ({
+            ...item,
+            discount: item.product.discount,
+            selected: false,
+          }))
+        );
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      } finally {
+        setShowLoadingModal(false);
+      }
+    };
+
+    fetchCartData();
+  }, []);
+
   const selectedItems = cartItems.filter((item) => item.selected);
 
-  // Menghitung total harga berdasarkan produk yang dipilih
-  const totalPrice = selectedItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+  const totalPriceWithoutDiscount = cartItems.reduce(
+    (total, item) => total + item.product.price * item.quantity,
     0
   );
 
-  // Menambah atau mengurangi kuantitas produk dalam keranjang
+  const totalDiscount = cartItems.reduce(
+    (total, item) => total + item.discount * item.quantity,
+    0
+  );
+
+  const totalPriceWithDiscount = totalPriceWithoutDiscount - totalDiscount;
+
   const updateQuantity = (itemId, newQuantity) => {
-    // Pastikan kuantitas tidak kurang dari 1
     newQuantity = Math.max(1, newQuantity);
 
     setCartItems((prevItems) =>
@@ -42,7 +55,6 @@ const CartPage = () => {
     );
   };
 
-  // Menandai atau membatalkan tanda pada produk
   const toggleSelect = (itemId) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -51,19 +63,25 @@ const CartPage = () => {
     );
   };
 
-  // Menghapus produk dari keranjang
   const removeItem = (itemId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
   return (
     <div className="bg-gray-100 p-4">
-      <div className="container mx-auto p-4 mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
+      {showLoadingModal && <Loading />}
+      <div className="container mx-auto p-4 mb-2 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <h1 className="text-3xl font-semibold mb-6">Keranjang Belanja</h1>
 
-        {cartItems.length === 0 ? (
+        {isLoading && <p>Loading...</p>}
+
+        {error && <p>Error fetching cart data: {error}</p>}
+
+        {!isLoading && !error && cartItems.length === 0 && (
           <p>Keranjangmu kosong</p>
-        ) : (
+        )}
+
+        {!isLoading && !error && cartItems.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {cartItems.map((item) => (
               <div
@@ -73,19 +91,26 @@ const CartPage = () => {
                 }`}
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={
+                    item.product.product_photos.length > 0
+                      ? item.product.product_photos[0].url
+                      : "placeholder-url"
+                  }
+                  alt={item.product.name}
                   className="w-full h-32 object-cover mb-4 rounded-md"
                 />
-                <h2 className="text-lg font-semibold mb-2">{item.name}</h2>
-                <p className="text-gray-600">Harga: Rp. {item.price.toFixed(2)}</p>
+                <h2 className="text-lg font-semibold mb-2">
+                  {item.product.name}
+                </h2>
+                <p className="text-gray-600">Harga: Rp. {item.product.price}</p>
+                <p className="text-gray-600">Diskon: Rp. {item.discount}</p>
+                <p className="text-gray-600">Ukuran: {item.size}</p>
 
                 <p className="text-gray-600">
-                  Subtotal: Rp. {(item.price * item.quantity).toFixed(2)}
+                  Subtotal: Rp. {item.product.price * item.quantity}
                 </p>
                 <div className="flex items-center mb-4 mt-4">
                   <p className="text-gray-600 mr-2">Kuantitas:</p>
-                  {/* Input untuk mengubah kuantitas produk */}
                   <input
                     type="number"
                     className="border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:ring focus:border-blue-300"
@@ -97,7 +122,6 @@ const CartPage = () => {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  {/* Tombol untuk menandai atau membatalkan tanda pada produk */}
                   <button
                     className={`${
                       item.selected
@@ -109,7 +133,6 @@ const CartPage = () => {
                     {item.selected ? "Dipilih" : "Pilih"}
                   </button>
 
-                  {/* Tombol untuk menghapus produk dari keranjang */}
                   <button
                     className="bg-red-500 text-white flex items-center justify-center px-4 py-2 rounded-md text-sm hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
                     onClick={() => removeItem(item.id)}
@@ -121,21 +144,32 @@ const CartPage = () => {
             ))}
           </div>
         )}
-
         {cartItems.length > 0 && (
-          <div className="mt-8">
+          <div className="bg-white p-8 rounded-md shadow-md mt-4">
             <h2 className="text-xl font-semibold mb-2">Total Harga</h2>
-            <p className="text-gray-600">Total: Rp. {totalPrice.toFixed(2)}</p>
-
-            {/* Tombol Checkout */}
-            <button
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
-              onClick={() => alert("Checkout button clicked")}
-            >
-              Checkout
-            </button>
+            <div className="flex justify-between mb-2">
+              <p className="text-gray-600">Total Harga Tanpa Diskon:</p>
+              <p className="text-gray-600">Rp. {totalPriceWithoutDiscount}</p>
+            </div>
+            <div className="flex justify-between mb-2">
+              <p className="text-gray-600">Total Diskon:</p>
+              <p className="text-gray-600">Rp. {totalDiscount}</p>
+            </div>
+            <div className="flex justify-between mb-2">
+              <p className="text-gray-600 font-semibold">Total Harga Dengan Diskon:</p>
+              <p className="text-gray-600 font-semibold">Rp. {totalPriceWithDiscount}</p>
+            </div>
           </div>
         )}
+      </div>
+      {/* Tombol Bayar Sekarang */}
+      <div className="mt-2 lg:px-8 lg:mx-auto lg:max-w-7xl">
+        <button
+          className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 font-bold py-2 px-4 rounded float-end mb-4"
+          onClick={() => alert("Checkout button clicked")}
+        >
+          Bayar Sekarang
+        </button>
       </div>
     </div>
   );
