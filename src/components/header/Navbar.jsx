@@ -33,7 +33,7 @@ const products = [
     name: "Rekomendasi Khusus",
     description:
       "Dapatkan rekomendasi khusus dari Ruti Store. Pilih dari berbagai produk yang direkomendasikan untuk tampil trendy dan fashionable setiap saat.",
-    href: "product/recommendation",
+    href: "/product/recommendation",
     icon: ChartPieIcon,
   },
 ];

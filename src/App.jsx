@@ -19,6 +19,7 @@ import AddReviewForm from "./pages/review/AddReviewPage";
 import ProductReviewPage from "./pages/review/ProductReviewPage";
 import OrderByCart from "./pages/order/OrderByCart";
 import OrderDetailPage from "./pages/profile/OrderDetailsPage";
+import GetAllProductRecomendaton from "./pages/product/GetProductRecomendation";
 
 
 
@@ -40,6 +41,7 @@ function App() {
             <Route exact path="/order/checkout/cart" element={<OrderByCart />} />
             <Route exact path="/product/" element={<GetAllProduct />} />
             <Route exact path="/product/details/:id" element={<ProductDetailPage />} />
+            <Route exact path="/product/recommendation" element={<GetAllProductRecomendaton />} />
             <Route exact path="/user/profile" element={<ProfilePage />} />   
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
