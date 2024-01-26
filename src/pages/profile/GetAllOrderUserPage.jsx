@@ -3,6 +3,7 @@ import { Pagination } from "../../components/pagination/Pagination";
 import Sidebar from "../../components/sidebar/SidebarProfile";
 import Loading from "../../components/modals/Loading";
 import getOrdersList from "../../hooks/order/GetOrderUserApi";
+import { useNavigate } from "react-router-dom";
 
 const GetAllOrderUser = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -11,6 +12,7 @@ const GetAllOrderUser = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +39,10 @@ const GetAllOrderUser = () => {
   if (loading) {
     return <Loading />;
   }
+
+  const handleDetailOrder = (id) => {
+    navigate(`/user/profile/orders/details/${id}`);
+  };
 
   return (
     <div className="bg-gray-100 p-4">
@@ -128,7 +134,10 @@ const GetAllOrderUser = () => {
                           Terima Pesanan
                         </button>
                       )}
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2">
+                    <button
+                      className="bg-blue-500 text-white px-2 py-1 rounded sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2"
+                      onClick={() => handleDetailOrder(order.id)}
+                    >
                       Detail Pesanan
                     </button>
                   </div>

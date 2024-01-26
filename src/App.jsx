@@ -43,7 +43,7 @@ function App() {
             <Route exact path="/user/profile" element={<ProfilePage />} />   
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
-            <Route exact path="/user/profile/orders/details" element={<OrderDetailPage />} />  
+            <Route exact path="/user/profile/orders/details/:id" element={<OrderDetailPage />} />  
             <Route exact path="/review/create" element={<AddReviewForm />} />
             <Route exact path="/review/list" element={<ProductReviewPage />} />        
           </Routes>
