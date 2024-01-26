@@ -18,6 +18,7 @@ import GetAllOrderUser from "./pages/profile/GetAllOrderUserPage";
 import AddReviewForm from "./pages/review/AddReviewPage";
 import ProductReviewPage from "./pages/review/ProductReviewPage";
 import OrderByCart from "./pages/order/OrderByCart";
+import OrderDetailPage from "./pages/profile/OrderDetailsPage";
 
 
 
@@ -42,6 +43,7 @@ function App() {
             <Route exact path="/user/profile" element={<ProfilePage />} />   
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
+            <Route exact path="/user/profile/orders/details/:id" element={<OrderDetailPage />} />  
             <Route exact path="/review/create" element={<AddReviewForm />} />
             <Route exact path="/review/list" element={<ProductReviewPage />} />        
           </Routes>
