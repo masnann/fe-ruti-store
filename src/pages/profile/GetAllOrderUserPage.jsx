@@ -3,6 +3,7 @@ import { Pagination } from "../../components/pagination/Pagination";
 import Sidebar from "../../components/sidebar/SidebarProfile";
 import Loading from "../../components/modals/Loading";
 import getOrdersList from "../../hooks/order/GetOrderUserApi";
+import acceptOrder from "../../hooks/order/AcceptOrderApi";
 import { useNavigate } from "react-router-dom";
 
 const GetAllOrderUser = () => {
@@ -31,6 +32,17 @@ const GetAllOrderUser = () => {
 
     fetchData();
   }, [currentPage, selectedStatus]);
+
+  const handleAcceptOrder = async (id) => {
+    try {
+      await acceptOrder(id);
+      const response = await getOrdersList(currentPage, 10, selectedStatus);
+      setFilteredOrders(response.data);
+      setTotalPages(response.pagination.total_pages);
+    } catch (error) {
+      console.error("Error accepting order:", error);
+    }
+  };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -130,7 +142,10 @@ const GetAllOrderUser = () => {
                   <div className="flex justify-end mt-2">
                     {order.order_status !== "Selesai" &&
                       order.order_status !== "Gagal" && (
-                        <button className="bg-green-500 text-white px-2 py-1 rounded mr-2 sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2">
+                        <button
+                          className="bg-green-500 text-white px-2 py-1 rounded mr-2 sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2"
+                          onClick={() => handleAcceptOrder(order.id)}
+                        >
                           Terima Pesanan
                         </button>
                       )}
