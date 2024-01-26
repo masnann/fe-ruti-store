@@ -1,144 +1,166 @@
 import React, { useState, useEffect } from "react";
 import { Pagination } from "../../components/pagination/Pagination";
+import Sidebar from "../../components/sidebar/SidebarProfile";
+import Loading from "../../components/modals/Loading";
+import getOrdersList from "../../hooks/order/GetOrderUserApi";
+import acceptOrder from "../../hooks/order/AcceptOrderApi";
+import { useNavigate } from "react-router-dom";
 
 const GetAllOrderUser = () => {
-  // Simulasi data pesanan
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      product: {
-        name: "Product A",
-        photo: "url_foto_product_a",
-        // Tambahkan properti lain yang diperlukan untuk produk
-      },
-      quantity: 2,
-      total: 200000,
-      status: "Pending",
-    },
-    {
-      id: 2,
-      product: {
-        name: "Product B",
-        photo: "url_foto_product_b",
-        // Tambahkan properti lain yang diperlukan untuk produk
-      },
-      quantity: 1,
-      total: 100000,
-      status: "Completed",
-    },
-    // ... tambahkan pesanan lainnya
-  ]);
-
-  const [filteredOrders, setFilteredOrders] = useState(orders);
-  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Filter pesanan berdasarkan status yang dipilih
-    if (selectedStatus === "All") {
-      setFilteredOrders(orders);
-    } else {
-      const filtered = orders.filter(
-        (order) => order.status === selectedStatus
-      );
-      setFilteredOrders(filtered);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getOrdersList(currentPage, 10, selectedStatus);
+        setFilteredOrders(response.data);
+        setTotalPages(response.pagination.total_pages);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching order:", error);
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentPage, selectedStatus]);
+
+  const handleAcceptOrder = async (id) => {
+    try {
+      await acceptOrder(id);
+      const response = await getOrdersList(currentPage, 10, selectedStatus);
+      setFilteredOrders(response.data);
+      setTotalPages(response.pagination.total_pages);
+    } catch (error) {
+      console.error("Error accepting order:", error);
     }
-
-    // Hitung total halaman untuk pagination
-    const totalOrders = filteredOrders.length;
-    const pageSize = 5; // Jumlah pesanan yang ditampilkan per halaman
-    const calculatedTotalPages = Math.ceil(totalOrders / pageSize);
-    setTotalPages(calculatedTotalPages);
-
-    // Atur currentPage agar tidak melebihi totalPages
-    setCurrentPage((prevPage) => Math.min(prevPage, calculatedTotalPages));
-  }, [selectedStatus, orders, currentPage]);
+  };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  const handleAcceptOrder = (orderId) => {
-    // Logika untuk menerima pesanan
-    console.log(`Menerima pesanan ${orderId}`);
-  };
+  if (loading) {
+    return <Loading />;
+  }
 
-  const handleReviewProduct = (productName) => {
-    // Logika untuk menampilkan halaman review produk
-    console.log(`Menampilkan halaman review untuk produk ${productName}`);
+  const handleDetailOrder = (id) => {
+    navigate(`/user/profile/orders/details/${id}`);
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
+    <div className="bg-gray-100 p-4">
       <div className="container mx-auto lg:px-8 lg:max-w-7xl">
-        <div className="bg-white rounded-lg shadow-lg p-4 lg:p-8 mt-4">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Daftar Pesanan
-          </h2>
+        <div className="flex flex-wrap">
+          <Sidebar />
+          <div className="w-full lg:w-3/4 bg-white rounded-lg shadow-lg p-4 lg:p-8 mt-4 lg:mt-0 flex flex-col">
+            <h2 className="text-2xl font-bold text-center mb-2">
+              DAFTAR PESANAN
+            </h2>
+            <div className="mb-2 mt-2 flex justify-end items-center mr-2">
+              <label
+                htmlFor="statusFilter"
+                className="text-sm font-medium mr-2"
+              >
+                Filter:
+              </label>
+              <select
+                id="statusFilter"
+                className="border rounded-md p-2"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="">Semua</option>
+                <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
+                <option value="Proses">Proses</option>
+                <option value="Pengiriman">Pengiriman</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Gagal">Gagal</option>
+              </select>
+            </div>
+            <div className="p-2">
+              {filteredOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="bg-white p-4 rounded-lg shadow-md mb-4"
+                >
+                  <p className="mb-4 font-semibold text-blue-500">
+                    Nomor Pesanan: {order.id_order}
+                  </p>
 
-          {/* Filter Dropdown */}
-          <div className="mb-4 float-end">
-            <label htmlFor="statusFilter" className="text-sm font-medium mr-2">
-              Filter Status:
-            </label>
-            <select
-              id="statusFilter"
-              className="border rounded-md p-2"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="All">Semua</option>
-              <option value="Pending">Pending</option>
-              <option value="Completed">Completed</option>
-              {/* Tambahkan opsi status lainnya sesuai kebutuhan */}
-            </select>
-          </div>
-
-          {/* Daftar Pesanan */}
-          {filteredOrders
-            .slice((currentPage - 1) * 5, currentPage * 5)
-            .map((order) => (
-              <div key={order.id} className="bg-white p-4 rounded-lg shadow-md mb-4">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full overflow-hidden">
-                    {order.product.photo ? (
-                      <img
-                        src={order.product.photo}
-                        alt={`${order.product.name}`}
-                        className="w-full h-full object-cover object-center"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-300"></div>
-                    )}
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-semibold mb-2">{order.product.name}</h3>
-                    <p className="text-gray-600 mb-2">{`Quantity: ${order.quantity}`}</p>
-                    <p className="text-gray-600 mb-2">{`Total Bayar: ${order.total}`}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-2">{`Status: ${order.status}`}</p>
-                <div className="flex justify-end">
-                  {order.status === "Pending" && (
-                    <button
-                      onClick={() => handleAcceptOrder(order.id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
+                  {order.order_details.map((orderDetail) => (
+                    <div
+                      key={orderDetail.id}
+                      className="flex flex-col md:flex-row mt-4 border-b border-gray-300 pb-4"
                     >
-                      Terima Pesanan
+                      <div className="w-full md:w-40 md:h-40 mb-4 md:mb-0">
+                        <img
+                          src={orderDetail.product.product_photos[0].url}
+                          alt={orderDetail.product.name}
+                          className="w-full h-full object-cover max-w-full max-h-full rounded-md shadow-md"
+                        />
+                      </div>
+                      <div className="w-3/4 md:ml-4">
+                        <div className="flex justify-between">
+                          <p className="font-semibold text-base mb-2">
+                            {orderDetail.product.name}
+                          </p>
+                          <p className="font-semibold text-base mb-2">
+                            Rp. {orderDetail.total_price}
+                          </p>
+                        </div>
+                        <p>Ukuran: {orderDetail.size}</p>
+                        <p>Jumlah: {orderDetail.quantity}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex justify-between mt-2">
+                    <p className="font-semibold text-red-600">
+                      Status Pesanan:
+                    </p>
+                    <p className="font-semibold text-red-600">
+                      {order.order_status}
+                    </p>
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <p className="font-semibold mb-2 flex justify-end">
+                      Total Pembayaran:
+                    </p>
+                    <p className="font-semibold mb-2">
+                      Rp. {order.total_amount_paid}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-end mt-2">
+                    {order.order_status !== "Selesai" &&
+                      order.order_status !== "Gagal" && (
+                        <button
+                          className="bg-green-500 text-white px-2 py-1 rounded mr-2 sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2"
+                          onClick={() => handleAcceptOrder(order.id)}
+                        >
+                          Terima Pesanan
+                        </button>
+                      )}
+                    <button
+                      className="bg-blue-500 text-white px-2 py-1 rounded sm:px-3 sm:py-1 sm:mr-2 md:px-4 md:py-2 md:mr-2"
+                      onClick={() => handleDetailOrder(order.id)}
+                    >
+                      Detail Pesanan
                     </button>
-                  )}
-                  <button
-                    onClick={() => handleReviewProduct(order.product.name)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                  >
-                    Review Produk
-                  </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
         </div>
-        {/* Display Pagination */}
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
