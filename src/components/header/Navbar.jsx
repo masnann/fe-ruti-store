@@ -191,7 +191,7 @@ export default function NavbarComponents() {
                       <>
                         <Popover.Button
                           className={`${
-                            open ? "text-gray-900" : "text-gray-500"
+                            open ? "text-orange-500" : "text-blue-700"
                           } relative flex items-center rounded-full bg-gray-200 p-1.5 focus:outline-none focus:ring focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800`}
                         >
                           <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -397,6 +397,15 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                       Notifications
                     </a>
                   </div> */}
+                  {/* Keranjang */}
+                  <div className="mt-2">
+                    <a
+                      href="/order/cart"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      Keranjang
+                    </a>
+                  </div>
                 </div>
               ) : loginPage ? (
                 <a

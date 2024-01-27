@@ -25,7 +25,7 @@ import FloatingButton from "./components/modals/Chatbot";
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Router>
         <div className="flex-grow">
           <Navbar />
@@ -47,7 +47,7 @@ function App() {
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
             <Route exact path="/user/profile/orders/details/:id" element={<OrderDetailPage />} />  
-            <Route exact path="/review/create" element={<AddReviewForm />} />
+            <Route path="/review/create/:orderDetailsId/:productId" element={<AddReviewForm />} />
             <Route exact path="/review/list" element={<ProductReviewPage />} />        
           </Routes>
         </div>

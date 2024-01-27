@@ -18,10 +18,16 @@ const AddressSelectionPage = () => {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch addresses from the API
         const addressData = await getAddressList();
         setAddresses(addressData.data);
         setLoading(false);

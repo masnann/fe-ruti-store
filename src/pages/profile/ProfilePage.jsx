@@ -4,8 +4,11 @@ import { PencilIcon } from "@heroicons/react/20/solid";
 import getUserProfile from "../../hooks/profile/GetProfileApi";
 import editUserProfile from "../../hooks/profile/EditProfileApi";
 import Loading from "../../components/modals/Loading";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
+
   const [editedName, setEditedName] = useState("");
   const [editedPhone, setEditedPhone] = useState("");
   const [editedGender, setEditedGender] = useState("");
@@ -13,6 +16,13 @@ const ProfilePage = () => {
   const [user, setUser] = useState({});
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(true); 
+
+  const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
