@@ -2,12 +2,24 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import getOrderDetails from "../../hooks/order/GetDetailsOrderApi";
 import Loading from "../../components/modals/Loading";
+import { useNavigate } from "react-router-dom";
 
 const OrderDetail = () => {
   const { id } = useParams();
   const [orderDetail, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [orderDetailsId, setOrderDetailsId] = useState(null);
+  const [productId, setProductId] = useState(null);
+  
+  const token = sessionStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +28,12 @@ const OrderDetail = () => {
         const response = await getOrderDetails(id);
         setOrderDetails(response.data);
         setLoading(false);
+
+        // Set orderDetailsId dan productId saat data diterima
+        if (response.data) {
+          setOrderDetailsId(response.data.id); // Sesuaikan dengan struktur data aktual Anda
+          setProductId(response.data.order_details[0].product.id); // Sesuaikan dengan struktur data aktual Anda
+        }
       } catch (error) {
         console.error("Error fetching order details:", error);
         setError(error);
@@ -26,6 +44,17 @@ const OrderDetail = () => {
     fetchData();
   }, [id]);
 
+  const handleReviewButtonClick = (orderDetailItem) => {
+    const { id: orderDetailsId } = orderDetailItem; // Menggunakan id dari order_details
+    const { id: productId } = orderDetailItem.product;
+  
+    if (!orderDetailItem.is_reviewed) {
+      navigate(`/review/create/${orderDetailsId}/${productId}`);
+    } else {
+      alert(`Anda sudah mereview produk ${orderDetailItem.product.name}`);
+    }
+  };
+  
   if (loading) {
     return <Loading />;
   }
@@ -79,13 +108,9 @@ const OrderDetail = () => {
                               : "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
                           } text-white px-6 py-2 rounded-md mt-2 w-full sm:w-auto`}
                           disabled={orderDetailItem.is_reviewed}
-                          onClick={() => {
-                            if (!orderDetailItem.is_reviewed) {
-                              alert(
-                                `Anda sudah mereview produk ${orderDetailItem.product.name}`
-                              );
-                            }
-                          }}
+                          onClick={() =>
+                            handleReviewButtonClick(orderDetailItem)
+                          }
                         >
                           {orderDetailItem.is_reviewed
                             ? "Sudah Direview"
@@ -137,8 +162,8 @@ const OrderDetail = () => {
                 Status Pesanan: {orderDetail.order_status}
               </p>
               <div className="flex justify-end mt-2">
-                {orderDetail.order_status != "Selesai" &&
-                  orderDetail.order_status != "Gagal" && (
+                {orderDetail.order_status !== "Selesai" &&
+                  orderDetail.order_status !== "Gagal" && (
                     <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full sm:w-auto">
                       Terima Pesanan
                     </button>
