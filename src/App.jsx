@@ -20,7 +20,7 @@ import ProductReviewPage from "./pages/review/ProductReviewPage";
 import OrderByCart from "./pages/order/OrderByCart";
 import OrderDetailPage from "./pages/profile/OrderDetailsPage";
 import GetAllProductRecomendaton from "./pages/product/GetProductRecomendation";
-
+import FloatingButton from "./components/modals/Chatbot";
 
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
       <Router>
         <div className="flex-grow">
           <Navbar />
+          <FloatingButton />
           <Routes>
             <Route exact path="/" element={<HomePage />} />
             <Route exact path="/login" element={<SignInForm />} />
