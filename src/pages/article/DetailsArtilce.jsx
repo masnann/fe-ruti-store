@@ -21,8 +21,8 @@ const DetailArticle = () => {
   }
 
   return (
-    <div className="bg-gray-100 p-8">
-      <div className="bg-white p-8 shadow-md rounded-lg">
+    <div className="bg-gray-100 p-4">
+      <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           {articleDetail.title}
         </h2>
@@ -33,10 +33,14 @@ const DetailArticle = () => {
             className="w-full max-w-xs h-auto rounded-lg shadow-lg mx-auto"
           />
         </div>
-        <p className="text-gray-600 mt-4">{articleDetail.content}</p>
+        <p className="text-gray-600 mt-4 whitespace-pre-line">
+          {articleDetail.content}
+        </p>
         <div className="flex justify-between items-center mt-2">
           <p className="text-sm">Oleh: {articleDetail.author}</p>
-          <p className="text-sm">Tanggal: {formatDate(articleDetail.created_at)}</p>
+          <p className="text-sm">
+            Tanggal: {formatDate(articleDetail.created_at)}
+          </p>
         </div>
       </div>
     </div>
