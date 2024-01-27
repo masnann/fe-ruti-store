@@ -8,14 +8,16 @@ import "slick-carousel/slick/slick-theme.css";
 import getCarouselList from "../../hooks/homepage/CarouselApi";
 import getCategoryList from "../../hooks/homepage/CategoryApi";
 import { getProducts } from "../../hooks/products/GetAllProduct";
-import { Link } from "react-router-dom";
-import Loading from "../../components/modals/Loading"; 
+import { Link, useNavigate } from "react-router-dom";
+import Loading from "../../components/modals/Loading";
 
 const Home = () => {
   const [carouselData, setCarouselData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [productData, setProductData] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +44,10 @@ const Home = () => {
   if (loading) {
     return <Loading />;
   }
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/details/${productId}`);
+  };
 
   return (
     <div className="container mx-auto">
@@ -75,7 +81,11 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {productData.map((product) => (
-            <ProductItem key={product.id} product={product} />
+            <ProductItem
+              key={product.id}
+              product={product}
+              onClick={() => handleProductClick(product.id)}
+            />
           ))}
         </div>
       </div>

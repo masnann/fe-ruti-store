@@ -3,6 +3,14 @@ import { Pagination } from "../../components/pagination/Pagination";
 import { getArticles } from "../../hooks/article/GetAll";
 import { useNavigate } from "react-router-dom";
 
+const truncateDescription = (description, maxWords) => {
+  const words = description.split(" ");
+  if (words.length > maxWords) {
+    return words.slice(0, maxWords).join(" ") + "...";
+  }
+  return description;
+};
+
 const GetAllArticle = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -53,7 +61,9 @@ const GetAllArticle = () => {
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
                 {article.title}
               </h2>
-              <p className="text-gray-600">{article.content}</p>
+              <p className="text-gray-600">
+                {truncateDescription(article.content, 20)}
+              </p>
               <button
                 className="text-black underline font-bold mt-4"
                 onClick={() => handleReadMore(article.id)}
