@@ -47,8 +47,8 @@ function App() {
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
             <Route exact path="/user/profile/orders/details/:id" element={<OrderDetailPage />} />  
-            <Route path="/review/create/:orderDetailsId/:productId" element={<AddReviewForm />} />
-            <Route exact path="/review/list" element={<ProductReviewPage />} />        
+            <Route exact path="/review/create/:orderDetailsId/:productId" element={<AddReviewForm />} />
+            <Route exact path="/review/list/:id" element={<ProductReviewPage />} />        
           </Routes>
         </div>
         <Footer />
