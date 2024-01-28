@@ -1,7 +1,9 @@
+// CheckoutPage.jsx
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useProductDetail from "../../hooks/products/DetailsProduct";
 import Loading from "../../components/modals/Loading";
+import AlamatModal from "../../components/modals/SelectAddress";
 import getAddressList from "../../hooks/profile/GetAddressApi";
 import createOrder from "../../hooks/order/OrderApi";
 
@@ -16,6 +18,7 @@ const CheckoutPage = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [note, setNote] = useState("");
   const [totalPayment, setTotalPayment] = useState(0);
+  const [isAlamatModalOpen, setAlamatModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -39,7 +42,7 @@ const CheckoutPage = () => {
     }
   }, [token, navigate]);
 
-  const { productId, selectedSize, quantity } =
+  const { productId, selectedSize, selectedColor, quantity } =
     state && state.orderDetails ? state.orderDetails : {};
 
   const { productDetail, loading, error } = useProductDetail(productId);
@@ -64,17 +67,22 @@ const CheckoutPage = () => {
     setNote(e.target.value);
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  const handleAlamatModalOpen = () => {
+    setAlamatModalOpen(true);
+  };
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!productDetail) {
-    return <p>Product not found</p>;
-  }
+  const handleAlamatSelect = (selectedAddressId) => {
+    const selectedAddressObject = addresses.find(
+      (address) => address.id === selectedAddressId
+    );
+  
+    if (selectedAddressObject) {
+      setSelectedAddress(selectedAddressObject);
+      setAlamatModalOpen(false);
+    } else {
+      console.error("Alamat yang dipilih tidak valid");
+    }
+  };  
 
   const handleCheckout = async () => {
     try {
@@ -88,6 +96,7 @@ const CheckoutPage = () => {
         address_id: selectedAddress.id,
         product_id: productId,
         size: selectedSize,
+        color: selectedColor,
         quantity,
         note,
       };
@@ -114,6 +123,10 @@ const CheckoutPage = () => {
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="container mx-auto bg-gray-100 p-4">
       <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
@@ -134,9 +147,9 @@ const CheckoutPage = () => {
               </div>
               <button
                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full sm:w-auto mt-4"
-                onClick={() => alert("Ubah Alamat button clicked")}
+                onClick={handleAlamatModalOpen}
               >
-                Ubah Alamat
+                Ganti Alamat
               </button>
             </>
           )}
@@ -170,8 +183,9 @@ const CheckoutPage = () => {
                     <p className="text-base">Diskon: </p>
                     <p className="text-base">Rp. {productDetail.discount}</p>
                   </div>
-                  <p className="text-base mb-2">Ukuran: {selectedSize}</p>
-                  <p className="text-base mb-2">Jumlah: {quantity}</p>
+                  <p className="text-base ">Ukuran: {selectedSize}</p>
+                  <p className="text-base ">Warna: {selectedColor}</p>
+                  <p className="text-base ">Jumlah: {quantity}</p>
                 </div>
               </div>
             )}
@@ -232,6 +246,13 @@ const CheckoutPage = () => {
           Bayar Sekarang
         </button>
       </div>
+
+      {/* Tambahkan modal alamat */}
+      <AlamatModal
+        isOpen={isAlamatModalOpen}
+        onClose={() => setAlamatModalOpen(false)}
+        onAddressSelect={handleAlamatSelect}
+      />
     </div>
   );
 };

@@ -29,10 +29,10 @@ const OrderDetail = () => {
         setOrderDetails(response.data);
         setLoading(false);
 
-        // Set orderDetailsId dan productId saat data diterima
+  
         if (response.data) {
-          setOrderDetailsId(response.data.id); // Sesuaikan dengan struktur data aktual Anda
-          setProductId(response.data.order_details[0].product.id); // Sesuaikan dengan struktur data aktual Anda
+          setOrderDetailsId(response.data.id); 
+          setProductId(response.data.order_details[0].product.id); 
         }
       } catch (error) {
         console.error("Error fetching order details:", error);
@@ -45,7 +45,7 @@ const OrderDetail = () => {
   }, [id]);
 
   const handleReviewButtonClick = (orderDetailItem) => {
-    const { id: orderDetailsId } = orderDetailItem; // Menggunakan id dari order_details
+    const { id: orderDetailsId } = orderDetailItem; 
     const { id: productId } = orderDetailItem.product;
   
     if (!orderDetailItem.is_reviewed) {
@@ -99,6 +99,7 @@ const OrderDetail = () => {
                           {orderDetailItem.product.name}
                         </p>
                         <p>Ukuran: {orderDetailItem.size}</p>
+                        <p>Warna: {orderDetailItem.color}</p>
                         <p>Jumlah: {orderDetailItem.quantity}</p>
                         <p>Total Harga: Rp. {orderDetailItem.total_price}</p>
                         <button

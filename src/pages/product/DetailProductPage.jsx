@@ -13,6 +13,11 @@ const ProductDetailPage = () => {
   const { productDetail, loading, error } = useProductDetail(id);
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
+  const [active, setActive] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("")
+  const isUserLoggedIn = sessionStorage.getItem("token") !== null;
 
   const fetchReviews = async () => {
     try {
@@ -27,28 +32,12 @@ const ProductDetailPage = () => {
     fetchReviews();
   }, [id]);
 
-  const handleCheckout = () => {
-    if (productDetail && selectedSize && quantity) {
-      navigate("/order/checkout", {
-        state: {
-          orderDetails: {
-            productId: productDetail.id,
-            selectedSize,
-            quantity,
-          },
-        },
-      });
-    } else {
-      alert("Please select size and quantity before checking out.");
-    }
-  };
-
-  const [active, setActive] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("");
-
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+  };
+
+  const handleColorChange = (color) => {
+    setSelectedColor(color);
   };
 
   useEffect(() => {
@@ -67,25 +56,50 @@ const ProductDetailPage = () => {
     );
   };
 
-  const handleAddToCart = async () => {
-    // Check if all required information is available
-    if (productDetail && selectedSize && quantity) {
-      // Call API to add product to cart
-      try {
-        const response = await createCart({
-          product_id: productDetail.id,
-          size: selectedSize,
-          quantity,
+  const handleCheckout = () => {
+    if (isUserLoggedIn) {
+      if (productDetail && selectedSize && quantity) {
+        navigate("/order/checkout", {
+          state: {
+            orderDetails: {
+              productId: productDetail.id,
+              selectedSize,
+              selectedColor,
+              quantity,
+            },
+          },
         });
-
-        // Handle success response
-        alert("Product added to cart successfully!");
-      } catch (error) {
-        // Handle error
-        alert("Failed to add product to cart. Please try again later.");
+      } else {
+        alert("Silakan pilih ukuran, warna dan jumlah sebelum checkout.");
       }
     } else {
-      alert("Please select size and quantity before adding to cart.");
+      navigate("/login");
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (isUserLoggedIn) {
+      if (productDetail && selectedSize && quantity) {
+      
+        try {
+          const response = await createCart({
+            product_id: productDetail.id,
+            size: selectedSize,
+            color: selectedColor,
+            quantity,
+          });
+
+          alert("Produk berhasil ditambahkan ke keranjang!");
+        } catch (error) {
+        
+          alert("Gagal menambahkan produk ke keranjang. Silakan coba lagi nanti.");
+        }
+      } else {
+        alert("Silakan pilih ukuran, warna dan jumlah sebelum ditambahkan ke keranjang.");
+      }
+    } else {
+    
+      navigate("/login");
     }
   };
 
@@ -114,6 +128,7 @@ const ProductDetailPage = () => {
   ));
 
   const availableSizes = productDetail.size.split(",");
+  const availableColors = productDetail.color.split(",");
 
   return (
     <div className="container mx-auto bg-gray-100 p-4">
@@ -186,6 +201,26 @@ const ProductDetailPage = () => {
                   </div>
                 )}
               </div>
+              <div className="flex items-center">
+                <p className="text-gray-700 mb-4 text-sm mr-2">Warna:</p>
+                {availableColors.length > 1 && (
+                  <div className="flex items-center ml-2 mb-4">
+                    {availableColors.map((color) => (
+                      <button
+                        key={color}
+                        className={`${
+                          selectedColor === color
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-300 text-gray-700"
+                        } px-2 py-1 rounded-md mr-2`}
+                        onClick={() => handleColorChange(color)}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <div className="flex flex-col md:flex-row items-center mb-4">
                 <div className="flex items-center mb-2 md:mb-0">
@@ -220,7 +255,7 @@ const ProductDetailPage = () => {
                 productDetail.categories.length > 0 ? (
                   <ul className="list-disc list-inside">
                     {productDetail.categories.map((category) => (
-                      <li key={category.id}>{category.name}</li>
+                      <span key={category.id}>{category.name}</span>
                     ))}
                   </ul>
                 ) : (
