@@ -129,6 +129,7 @@ const CartPage = () => {
                 <p className="text-gray-600">Harga: Rp. {item.product.price}</p>
                 <p className="text-gray-600">Diskon: Rp. {item.discount}</p>
                 <p className="text-gray-600">Ukuran: {item.size}</p>
+                <p className="text-gray-600">Warna: {item.color}</p>
 
                 <p className="text-gray-600">
                   Subtotal: Rp.{" "}

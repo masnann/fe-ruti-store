@@ -125,6 +125,7 @@ const GetAllOrderUser = () => {
                           </p>
                         </div>
                         <p>Ukuran: {orderDetail.size}</p>
+                        <p>Warna: {orderDetail.color}</p>
                         <p>Jumlah: {orderDetail.quantity}</p>
                       </div>
                     </div>
