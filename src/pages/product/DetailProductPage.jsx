@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { StarIcon } from "@heroicons/react/20/solid";
 import useProductDetail from "../../hooks/products/DetailsProduct";
 import Loading from "../../components/modals/Loading";
 import { useNavigate } from "react-router-dom";
 import createCart from "../../hooks/order/CreateCartApi";
+import getReviewsList from "../../hooks/products/GetProductReview";
+import { FaStar } from "react-icons/fa";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { productDetail, loading, error } = useProductDetail(id);
   const navigate = useNavigate();
+  const [reviews, setReviews] = useState([]);
+
+  const fetchReviews = async () => {
+    try {
+      const reviewsResponse = await getReviewsList(id, 1, 3);
+      setReviews(reviewsResponse.data);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, [id]);
 
   const handleCheckout = () => {
-    // Check if all required information is available
     if (productDetail && selectedSize && quantity) {
       navigate("/order/checkout", {
         state: {
@@ -220,6 +235,77 @@ const ProductDetailPage = () => {
               </button>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
+        <div className="bg-white p-8 rounded-md shadow-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-2xl font-bold">Ulasan</h3>
+            <Link
+              to={`/review/list/${id}`}
+              className="text-blue-500 hover:underline"
+            >
+              Lihat Semua
+            </Link>
+          </div>
+          <p className="text-gray-700">
+            Total ulasan: {productDetail.total_reviews} ulasan
+          </p>
+          {/* Display Product Reviews or "Belum ada ulasan" message */}
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <div
+                key={review.id}
+                className="bg-white p-6 rounded-lg shadow-md mb-4"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      {review.user.photo_profile ? (
+                        <img
+                          src={review.user.photo_profile}
+                          alt={`${review.user.name}'s profile`}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-300"></div>
+                      )}
+                    </div>
+                    <span className="font-semibold text-lg ml-4">
+                      {review.user.name}
+                    </span>
+                  </div>
+                  <div className="flex text-yellow-500">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <FaStar
+                        key={star}
+                        size={18}
+                        color={review.rating >= star ? "#FFD700" : "#C0C0C0"}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {review.photos.length > 0 && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    {review.photos.map((photo) => (
+                      <div key={photo.id}>
+                        <img
+                          className="h-40 w-full max-w-full rounded-lg object-cover object-center"
+                          src={photo.url}
+                          alt={`review-photo-${photo.id}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex items-center mt-4">
+                  <span className="text-gray-600">{review.description}</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>Belum ada ulasan untuk produk ini.</p>
+          )}
         </div>
       </div>
     </div>

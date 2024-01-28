@@ -5,11 +5,18 @@ import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const navigate = useNavigate();
-
+  
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCart, setSelectedCart] = useState([]);
+  
+  const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -79,11 +86,9 @@ const CartPage = () => {
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.id !== itemId)
       );
-      // Memuat ulang halaman setelah berhasil menghapus item
       window.location.reload();
     } catch (error) {
       console.error("Error deleting cart item:", error);
-      // Handle error jika gagal menghapus item
     }
   };
 

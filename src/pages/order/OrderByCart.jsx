@@ -6,6 +6,7 @@ import Loading from "../../components/modals/Loading";
 
 const OrderByCart = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   const [selectedCart, setSelectedCart] = useState(state?.selectedCart || []);
   const [addresses, setAddresses] = useState([]);
@@ -16,6 +17,13 @@ const OrderByCart = () => {
   const [totalPayment, setTotalPayment] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     const fetchAddresses = async () => {

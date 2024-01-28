@@ -15,6 +15,13 @@ const GetAllOrderUser = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
