@@ -65,8 +65,8 @@ export default function NavbarComponents() {
       >
         <div className="flex lg:flex-1">
           <a href="/" className="-m-1.5 p-1.5">
-            <span className="sr-only">Ruti Store</span>
-            <span className="text-blue-600 font-extrabold">RUTI STORE</span>
+            <span className="sr-only">SANDER’STORE</span>
+            <span className="text-blue-600 font-extrabold">SANDER’STORE</span>
           </a>
         </div>
 
@@ -143,7 +143,7 @@ export default function NavbarComponents() {
             Tentang Kami
           </a>
           <a
-            href="#contact"
+            href="/contact"
             className="text-sm font-semibold leading-6 text-gray-900"
           >
             Kontak
@@ -373,7 +373,7 @@ function MobileMenuDialog({ mobileMenuOpen, setMobileMenuOpen }) {
                 Tentang Kami
               </a>
               <a
-                href="#contact"
+                href="/contact"
                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
               >
                 Kontak

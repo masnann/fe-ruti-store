@@ -21,6 +21,7 @@ import OrderByCart from "./pages/order/OrderByCart";
 import OrderDetailPage from "./pages/profile/OrderDetailsPage";
 import GetAllProductRecomendaton from "./pages/product/GetProductRecomendation";
 import FloatingButton from "./components/modals/Chatbot";
+import ContactPage from "./pages/home/ContactPage";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <Route exact path="/login" element={<SignInForm />} />
             <Route exact path="/signup" element={<SignUpForm />} />
             <Route exact path="/about" element={<About />} />
+            <Route exact path="/contact" element={<ContactPage />} />
             <Route exact path="/article" element={<GetAllArticle />} />
             <Route exact path="/article/details/:id" element={<DetailArticle />} />
             <Route exact path="/order/cart" element={<CartPage />} />
@@ -48,7 +50,8 @@ function App() {
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
             <Route exact path="/user/profile/orders/details/:id" element={<OrderDetailPage />} />  
             <Route exact path="/review/create/:orderDetailsId/:productId" element={<AddReviewForm />} />
-            <Route exact path="/review/list/:id" element={<ProductReviewPage />} />        
+            <Route exact path="/review/list/:id" element={<ProductReviewPage />} /> 
+                   
           </Routes>
         </div>
         <Footer />

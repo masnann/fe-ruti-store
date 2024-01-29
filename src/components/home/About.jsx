@@ -32,10 +32,10 @@ const AboutUs = () => {
             />
           </div>
           <div className="w-full lg:w-1/2 text-gray-600 p-4 lg:p-8">
-            <p className="font-bold">Selamat datang di Ruti Store</p>
+            <p className="font-bold">Selamat datang di  SANDER’STORE</p>
             <br></br>
             <p>
-              Di Ruti Store, kami percaya pada kekuatan transformatif dari
+              Di SANDER’STORE, kami percaya pada kekuatan transformatif dari
               berbelanja online. Perjalanan kami dimulai dengan tujuan yang
               sederhana namun ambisius: menyediakan pengalaman berbelanja yang
               mulus dan menyenangkan bagi setiap pelanggan.
@@ -44,12 +44,12 @@ const AboutUs = () => {
             <p>
               Kami membayangkan dunia di mana setiap orang dapat mengakses
               berbagai produk berkualitas tinggi hanya dengan satu kali klik.
-              Ruti Store bukan hanya platform e-commerce; ini adalah tujuan di
+              SANDER’STORE bukan hanya platform e-commerce; ini adalah tujuan di
               mana inovasi bertemu dengan keterjangkauan.
             </p>
             <br></br>
             <p>
-              Terima kasih telah memilih Ruti Store. Kami berharap dapat
+              Terima kasih telah memilih SANDER’STORE. Kami berharap dapat
               melayani Anda dengan semangat, dedikasi, dan sentuhan inovatif.
             </p>
             <br></br>
@@ -61,7 +61,7 @@ const AboutUs = () => {
           Mengapa Memilih Kami?
         </h2>
         <p className="text-center text-gray-600 mb-8 lg:w-2/3 mx-auto">
-          Di Ruti Store, kami bangga menyediakan pengalaman berbelanja online
+          Di SANDER’STORE, kami bangga menyediakan pengalaman berbelanja online
           yang tak tertandingi. Komitmen kami tidak hanya tentang produk; ini
           tentang memberikan kemudahan, aksesibilitas, dan solusi yang efisien
           biaya bagi pelanggan kami yang berharga.

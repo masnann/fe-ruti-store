@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
               <h2 className="text-xl font-semibold mb-4">Tentang Kami</h2>
               <p className="text-gray-500">
-                Ruti Store adalah tujuan Anda untuk produk berkualitas dan
+              SANDER’STORE adalah tujuan Anda untuk produk berkualitas dan
                 layanan pelanggan yang luar biasa. Jelajahi berbagai macam produk
                 kami dan berbelanja dengan percaya diri.
               </p>
@@ -25,7 +25,7 @@ const Footer = () => {
           </div>
           <div className="container mx-auto flex flex-col items-center justify-center">
             <p className="text-gray-500 footer-text text-center">
-              &copy; 2024 Ruti Store. Seluruh hak cipta dilindungi.
+              &copy; 2024 SANDER’STORE. Seluruh hak cipta dilindungi.
             </p>
           </div>
         </div>
