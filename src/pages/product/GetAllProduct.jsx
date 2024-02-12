@@ -13,6 +13,7 @@ const GetAllProduct = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +41,23 @@ const GetAllProduct = () => {
     navigate(`/product/details/${productId}`);
   };
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await getProducts(1, 10, searchTerm);
+      setProducts(response.data);
+      setTotalPages(response.pagination.total_pages);
+      setCurrentPage(1); 
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError(error);
+      setLoading(false);
+    }
+  };
+
   if (loading) {
-    // Tampilkan modal loading selama data masih diambil
     return <Loading />;
   }
 
@@ -50,11 +66,21 @@ const GetAllProduct = () => {
       <div className="mb-4 lg:px-8 lg:mx-auto lg:max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Produk</h2>
-          <input
-            type="text"
-            placeholder="Cari produk..."
-            className="border px-4 py-2 rounded-md"
-          />
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Cari produk..."
+              className="border px-4 py-2 rounded-md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Cari
+            </button>
+          </form>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product) => (

@@ -2,22 +2,25 @@
 import axios from 'axios';
 import { BASE_URL } from '../../utils/ApiConfig';
 
-export const getProducts = async (page = 1, pageSize = 10) => {
+export const getProducts = async (page = 1, pageSize = 10, search = "") => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/api/v1/product/list?page=${page}&page_size=${pageSize}`
+      `${BASE_URL}/api/v1/product/list?page=${page}&page_size=${pageSize}&search=${search}`
     );
     return response.data;
   } catch (error) {
     console.error('Error fetching product:', error);
+    let errorMessage = "An error occurred";
+    
     if (error.response) {
-        setError(error.response.data.message || "An error occurred");
-        console.error("Backend error message:", error.response.data.message);
-      } else if (error.request) {
-        setError("No response received from the server");
-      } else {
-        setError("An error occurred while setting up the request");
-      }
-    throw error;
+      errorMessage = error.response.data.message || errorMessage;
+      console.error("Backend error message:", error.response.data.message);
+    } else if (error.request) {
+      errorMessage = "No response received from the server";
+    } else {
+      errorMessage = "An error occurred while setting up the request";
+    }
+
+    throw new Error(errorMessage);
   }
 };
