@@ -26,7 +26,7 @@ const AboutUs = () => {
         <div className="flex flex-col lg:flex-row lg:justify-center space-y-4 lg:space-y-0 lg:space-x-4 bg-white rounded-lg shadow-lg p-4 lg:p-8">
           <div className="flex items-center justify-center lg:w-1/2 p-2">
             <img
-              src="https://res.cloudinary.com/dufa4bel6/image/upload/v1702302550/disappear/pvkmms1w5dvw3o85vvqf.png"
+              src="src\assets\about us.jpg"
               alt="Gambar tentang kami"
               className="w-full h-auto rounded-lg shadow-lg mb-8 lg:mb-0"
             />

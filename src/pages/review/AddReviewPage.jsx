@@ -44,7 +44,7 @@ const AddReviewPage = () => {
     const newPhotos = [...uploadedPhotos];
     newPhotos.splice(index, 1);
     setUploadedPhotos(newPhotos);
-    setCurrentPhotoIndex(0); // Reset currentPhotoIndex to the first photo after deletion
+    setCurrentPhotoIndex(0); 
   };
 
   const handleSubmitReview = async () => {
