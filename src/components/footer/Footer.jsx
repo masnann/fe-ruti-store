@@ -19,7 +19,7 @@ const Footer = () => {
                 <br />
                 Telepon: +123 456 789
                 <br />
-                Email: info@rutistore.com
+                Email: info@sander'store.com
               </p>
             </div>
           </div>
