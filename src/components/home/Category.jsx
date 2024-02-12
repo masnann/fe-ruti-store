@@ -1,8 +1,11 @@
 // CategoryItem.jsx
 import React from "react";
 
-const CategoryItem = ({ category }) => (
-  <div className="category-slider-item">
+const CategoryItem = ({ category, onClick }) => (
+  <div
+    className="category-slider-item"
+    onClick={() => onClick(category.id)}
+  >
     <div className="rounded-lg overflow-hidden shadow-sm p-2" style={{ borderRadius: "12px" }}>
       <div className="flex flex-col items-center">
         <img
