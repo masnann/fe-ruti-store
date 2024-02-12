@@ -22,7 +22,7 @@ import OrderDetailPage from "./pages/profile/OrderDetailsPage";
 import GetAllProductRecomendaton from "./pages/product/GetProductRecomendation";
 import FloatingButton from "./components/modals/Chatbot";
 import ContactPage from "./pages/home/ContactPage";
-
+import GetAllProductCategory from "./pages/product/GetProductCategory";
 
 function App() {
   return (
@@ -45,6 +45,7 @@ function App() {
             <Route exact path="/product/" element={<GetAllProduct />} />
             <Route exact path="/product/details/:id" element={<ProductDetailPage />} />
             <Route exact path="/product/recommendation" element={<GetAllProductRecomendaton />} />
+            <Route exact path="/product/category/:id" element={<GetAllProductCategory />} />
             <Route exact path="/user/profile" element={<ProfilePage />} />   
             <Route exact path="/user/profile/address" element={<AddressSelectionPage />} />         
             <Route exact path="/user/profile/orders" element={<GetAllOrderUser />} />   
