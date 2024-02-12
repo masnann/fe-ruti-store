@@ -49,6 +49,10 @@ const Home = () => {
     navigate(`/product/details/${productId}`);
   };
 
+  const handleCategoryClick = (id) => {
+    navigate(`/product/category/${id}`);
+  };
+
   return (
     <div className="container mx-auto">
       {/* Carousel */}
@@ -66,7 +70,11 @@ const Home = () => {
           className="category-slider"
         >
           {categoryData.map((category) => (
-            <CategoryItem key={category.id} category={category} />
+            <CategoryItem
+              key={category.id}
+              category={category}
+              onClick={() => handleCategoryClick(category.id)}
+            />
           ))}
         </Slider>
       </div>
