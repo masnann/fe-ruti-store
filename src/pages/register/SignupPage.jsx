@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useRegisterApi from "../../hooks/auth/RegisterApi";
 import { useNavigate } from "react-router-dom";
 
@@ -7,24 +7,27 @@ const SignUpForm = () => {
   const [name, setName] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const { register, isLoading, error } = useRegisterApi();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      // Call the register function from the hook
-      await register(email, password, name, phone);
-
-      // Redirect to the login page upon successful registration
+      await useRegisterApi({ email, password, name, phone });
+      alert("Registrasi berhasil!");
       navigate("/login");
     } catch (error) {
-      // Handle any errors if needed
+      alert("Gagal melakukan registrasi. Silakan coba lagi.")
       console.error("Error during registration:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="container mx-auto p-4 sm:p-8 min-h-screen bg-gray-100">
       <div className="p-6 lg:px-8 lg:mx-auto lg:max-w-7xl">
@@ -62,6 +65,7 @@ const SignUpForm = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  required
                 />
               </div>
 
@@ -75,6 +79,7 @@ const SignUpForm = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  required
                 />
               </div>
 
@@ -88,18 +93,19 @@ const SignUpForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  required
                 />
               </div>
               <button
                 type="submit"
                 className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                disabled={isLoading} // Disable the button during loading
+                disabled={isLoading} 
               >
                 {isLoading ? "Mendaftar..." : "Daftar"}
               </button>
 
               {error && (
-                <p className="text-sm text-red-500 text-center">{error}</p>
+                <p className="text-sm text-red-500 text-center mt-2">{error}</p>
               )}
 
               <p className="text-sm text-gray-500 text-center">
