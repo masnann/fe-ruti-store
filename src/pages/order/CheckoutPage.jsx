@@ -91,7 +91,6 @@ const CheckoutPage = () => {
         return;
       }
 
-      // Data pesanan
       const orderData = {
         address_id: selectedAddress.id,
         product_id: productId,
@@ -100,13 +99,10 @@ const CheckoutPage = () => {
         quantity,
         note,
       };
-      console.log("Data Pesanan:", orderData);
 
-      // Membuat pesanan
       const orderResponse = await createOrder(orderData);
 
       if (orderResponse.message === "Order created successfully") {
-        // Pesanan berhasil dibuat, arahkan pengguna ke redirect_url
         alert("Pesanan berhasil dibuat!");
         if (orderResponse.data.redirect_url) {
           window.location.href = orderResponse.data.redirect_url;
@@ -114,7 +110,6 @@ const CheckoutPage = () => {
           alert("Redirect URL tidak tersedia");
         }
       } else {
-        // Gagal membuat pesanan, tanggapi sesuai kebutuhan
         alert(`Gagal membuat pesanan: ${orderResponse.message}`);
       }
     } catch (error) {
