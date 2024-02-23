@@ -17,7 +17,10 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
-  const isUserLoggedIn = sessionStorage.getItem("token") !== null;
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(
+    sessionStorage.getItem("token") !== null
+  );
+  const displayStock = (stock) => (stock > 0 ? `Stok: ${stock}` : "Stok Habis");
 
   const fetchReviews = async () => {
     try {
@@ -32,19 +35,32 @@ const ProductDetailPage = () => {
     fetchReviews();
   }, [id]);
 
-  const handleSizeChange = (size) => {
-    setSelectedSize(size);
-  };
-
-  const handleColorChange = (color) => {
-    setSelectedColor(color);
-  };
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     if (productDetail) {
       setActive(productDetail.photos[0].url);
+      setStatus(productDetail.status);
     }
   }, [productDetail]);
+
+  // Varians state
+  const [variants, setVariants] = useState([]);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+
+  useEffect(() => {
+    if (productDetail && productDetail.variants) {
+      setVariants(productDetail.variants);
+      setSelectedVariant(productDetail.variants[0]); // Pilih varian pertama sebagai default
+    }
+  }, [productDetail]);
+
+  // Handle pemilihan varian
+  const handleSelectVariant = (variant) => {
+    setSelectedSize(variant.size);
+    setSelectedColor(variant.color);
+    setSelectedVariant(variant);
+  };
 
   const handleDecreaseQuantity = () => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
@@ -52,52 +68,64 @@ const ProductDetailPage = () => {
 
   const handleIncreaseQuantity = () => {
     setQuantity((prevQuantity) =>
-      Math.min(productDetail.stock, prevQuantity + 1)
+      Math.min(selectedVariant.stock, prevQuantity + 1)
     );
   };
 
-  const handleCheckout = () => {
+  const handleAddToCart = async () => {
     if (isUserLoggedIn) {
-      if (productDetail && selectedSize && quantity) {
-        navigate("/order/checkout", {
-          state: {
-            orderDetails: {
-              productId: productDetail.id,
-              selectedSize,
-              selectedColor,
+      if (status !== "Diarsipkan") {
+        if (productDetail && selectedVariant && quantity) {
+          try {
+            const response = await createCart({
+              product_id: productDetail.id,
+              size: selectedSize,
+              color: selectedColor,
               quantity,
-            },
-          },
-        });
+            });
+
+            alert("Produk berhasil ditambahkan ke keranjang!");
+          } catch (error) {
+            alert(
+              "Gagal menambahkan produk ke keranjang. Silakan coba lagi nanti."
+            );
+          }
+        } else {
+          alert(
+            "Silakan pilih varian, ukuran, warna, dan jumlah sebelum ditambahkan ke keranjang."
+          );
+        }
       } else {
-        alert("Silakan pilih ukuran, warna dan jumlah sebelum checkout.");
+        alert(
+          "Produk ini telah diarsipkan dan tidak dapat ditambahkan ke keranjang."
+        );
       }
     } else {
       navigate("/login");
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleCheckout = () => {
     if (isUserLoggedIn) {
-      if (productDetail && selectedSize && quantity) {
-        try {
-          const response = await createCart({
-            product_id: productDetail.id,
-            size: selectedSize,
-            color: selectedColor,
-            quantity,
+      if (status !== "Diarsipkan") {
+        if (productDetail && selectedVariant && quantity) {
+          navigate("/order/checkout", {
+            state: {
+              orderDetails: {
+                productId: productDetail.id,
+                selectedSize,
+                selectedColor,
+                quantity,
+              },
+            },
           });
-
-          alert("Produk berhasil ditambahkan ke keranjang!");
-        } catch (error) {
+        } else {
           alert(
-            "Gagal menambahkan produk ke keranjang. Silakan coba lagi nanti."
+            "Silakan pilih varian, ukuran, warna, dan jumlah sebelum checkout."
           );
         }
       } else {
-        alert(
-          "Silakan pilih ukuran, warna dan jumlah sebelum ditambahkan ke keranjang."
-        );
+        alert("Produk ini telah diarsipkan dan tidak dapat dibeli.");
       }
     } else {
       navigate("/login");
@@ -127,9 +155,6 @@ const ProductDetailPage = () => {
   }).map((_, index) => (
     <StarIcon key={index} className="w-5 h-5 text-gray-300" />
   ));
-
-  const availableSizes = productDetail.size.split(",");
-  const availableColors = productDetail.color.split(",");
 
   return (
     <div className="container mx-auto bg-gray-100 p-4">
@@ -179,48 +204,30 @@ const ProductDetailPage = () => {
               <p className="text-gray-700 mb-4 text-sm">
                 {productDetail.description}
               </p>
-              <p className="text-gray-700 mb-4 text-sm">
-                Stok: {productDetail.stock}
-              </p>
-              {/* Bagian render ukuran */}
-              <div className="flex items-center">
-                <p className="text-gray-700 mb-4 text-sm mr-2">Ukuran:</p>
-                <div className="flex items-center ml-2 mb-4">
-                  {availableSizes.map((size) => (
-                    <button
-                      key={size}
-                      className={`${
-                        selectedSize === size
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-300 text-gray-700"
-                      } px-2 py-1 rounded-md mr-2`}
-                      onClick={() => handleSizeChange(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center">
-                <p className="text-gray-700 mb-4 text-sm mr-2">Warna:</p>
-                {availableColors.length > 1 && (
-                  <div className="flex items-center ml-2 mb-4">
-                    {availableColors.map((color) => (
-                      <button
-                        key={color}
-                        className={`${
-                          selectedColor === color
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-300 text-gray-700"
-                        } px-2 py-1 rounded-md mr-2`}
-                        onClick={() => handleColorChange(color)}
-                      >
-                        {color}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+
+              {variants.length > 0 && (
+  <div className="mb-4">
+    <p className="text-gray-700 mb-2 text-sm font-semibold">
+      Pilih Varian:
+    </p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      {variants.map((variant) => (
+        <button
+          key={variant.id}
+          className={`border border-gray-300 px-2 py-1 rounded-md text-xs focus:outline-none focus:border-blue-500 ${
+            selectedVariant && selectedVariant.id === variant.id
+              ? "bg-blue-500 text-white"
+              : ""
+          }`}
+          onClick={() => handleSelectVariant(variant)}
+        >
+          {variant.size} - {variant.color} ({displayStock(variant.stock)})
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
 
               <div className="flex flex-col md:flex-row items-center mb-4">
                 <div className="flex items-center mb-2 md:mb-0">
