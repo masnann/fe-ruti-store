@@ -88,7 +88,7 @@ const AddReviewPage = () => {
       setLoading(false);
 
       // Redirect or navigate to a different page
-      navigate(`/review/list`);
+      navigate(`/user/profile/orders`);
     } catch (error) {
       setError(error);
       setLoading(false);

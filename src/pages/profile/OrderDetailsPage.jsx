@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import getOrderDetails from "../../hooks/order/GetDetailsOrderApi";
+import getOrdersList from "../../hooks/order/GetOrderUserApi";
+import acceptOrder from "../../hooks/order/AcceptOrderApi";
 import Loading from "../../components/modals/Loading";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +14,10 @@ const OrderDetail = () => {
   const navigate = useNavigate();
   const [orderDetailsId, setOrderDetailsId] = useState(null);
   const [productId, setProductId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   
   const token = sessionStorage.getItem("token");
 
@@ -62,6 +68,15 @@ const OrderDetail = () => {
   if (error) {
     return <div>Error fetching order details: {error.message}</div>;
   }
+
+  const handleAcceptOrder = async (id) => {
+    try {
+      await acceptOrder(id);
+      navigate('/user/profile/orders');
+    } catch (error) {
+      console.error("Error accepting order:", error);
+    }
+  };
 
   return (
     <div className="bg-gray-100 p-4">
@@ -165,7 +180,9 @@ const OrderDetail = () => {
               <div className="flex justify-end mt-2">
                 {orderDetail.order_status !== "Selesai" &&
                   orderDetail.order_status !== "Gagal" && (
-                    <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full sm:w-auto">
+                    <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 w-full sm:w-auto"
+                    onClick={() => handleAcceptOrder(orderDetail.id)}
+                    >
                       Terima Pesanan
                     </button>
                   )}

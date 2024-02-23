@@ -16,7 +16,7 @@ const ProductDetailPage = () => {
   const [active, setActive] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("")
+  const [selectedColor, setSelectedColor] = useState("");
   const isUserLoggedIn = sessionStorage.getItem("token") !== null;
 
   const fetchReviews = async () => {
@@ -80,7 +80,6 @@ const ProductDetailPage = () => {
   const handleAddToCart = async () => {
     if (isUserLoggedIn) {
       if (productDetail && selectedSize && quantity) {
-      
         try {
           const response = await createCart({
             product_id: productDetail.id,
@@ -91,14 +90,16 @@ const ProductDetailPage = () => {
 
           alert("Produk berhasil ditambahkan ke keranjang!");
         } catch (error) {
-        
-          alert("Gagal menambahkan produk ke keranjang. Silakan coba lagi nanti.");
+          alert(
+            "Gagal menambahkan produk ke keranjang. Silakan coba lagi nanti."
+          );
         }
       } else {
-        alert("Silakan pilih ukuran, warna dan jumlah sebelum ditambahkan ke keranjang.");
+        alert(
+          "Silakan pilih ukuran, warna dan jumlah sebelum ditambahkan ke keranjang."
+        );
       }
     } else {
-    
       navigate("/login");
     }
   };
@@ -181,25 +182,24 @@ const ProductDetailPage = () => {
               <p className="text-gray-700 mb-4 text-sm">
                 Stok: {productDetail.stock}
               </p>
+              {/* Bagian render ukuran */}
               <div className="flex items-center">
                 <p className="text-gray-700 mb-4 text-sm mr-2">Ukuran:</p>
-                {availableSizes.length > 1 && (
-                  <div className="flex items-center ml-2 mb-4">
-                    {availableSizes.map((size) => (
-                      <button
-                        key={size}
-                        className={`${
-                          selectedSize === size
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-300 text-gray-700"
-                        } px-2 py-1 rounded-md mr-2`}
-                        onClick={() => handleSizeChange(size)}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <div className="flex items-center ml-2 mb-4">
+                  {availableSizes.map((size) => (
+                    <button
+                      key={size}
+                      className={`${
+                        selectedSize === size
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-300 text-gray-700"
+                      } px-2 py-1 rounded-md mr-2`}
+                      onClick={() => handleSizeChange(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="flex items-center">
                 <p className="text-gray-700 mb-4 text-sm mr-2">Warna:</p>
